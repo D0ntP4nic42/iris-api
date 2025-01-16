@@ -1,0 +1,22 @@
+name: sistema-iris
+services:
+  mysql:
+    image: mysql
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+    environment:
+      - MYSQL_DATABASE=iris
+      - MYSQL_ROOT_PASSWORD=1234
+    networks:
+      - iris_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "--password=1234"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  iris_network:
+    driver: bridge
