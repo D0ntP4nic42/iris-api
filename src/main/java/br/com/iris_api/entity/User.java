@@ -30,12 +30,18 @@ public class User {
 	@Column(nullable = false)
 	private String senha;
 	
-	public User(String nome, String cpf, String email, String senha) {
+	@Column(nullable = false)
+	private String role;
+	
+	public User() {}
+
+	public User(String nome, String cpf, String email, String senha, String role) {
 		super();
 		this.nome = nome;
 		this.cpf = cpf;
 		this.email = email;
 		this.senha = senha;
+		this.role = role;
 	}
 
 	// Getters e setters
@@ -77,5 +83,13 @@ public class User {
 
 	public void setSenha(String senha) {
 		this.senha = senha;
+	}
+	
+	public String getRole() {
+		return this.role;
+	}
+	
+	public void setRole(String role) {
+		this.role = role;
 	}
 }
