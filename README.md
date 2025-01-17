@@ -42,6 +42,15 @@ Seguido de:
 ```bash
 npm run dev
 ```
+
+Agora utilizando sua IDE Java de preferência (Eclipse, Intellij, VsCode), rode o backend presente no diretório **iris-api**.  
+  
+Para rodar em Docker é necessário apenas rodar o comando:
+```bash
+docker-compose up --build -d
+```
+O comando pode ser utilizado nas duas pastas (**iris-app** e **iris-api**).
+
 O projeto agora está rodando, basta abrir o navegador no localhost com a porta que aparece no terminal.
 
 ## Detalhes do desenvolvimento (Backend):
@@ -56,6 +65,7 @@ Boa parte do desenvolvimento da segurança foi feita com base no vídeo: https:/
 - Mudar as chaves públicas e privadas antes do deploy (Além de achar alguma forma de fornecer elas quando necessário sem precisar guardar no git) da aplicação por questões de segurança.  
 - Avaliar a possibilidade de tratar coordenadores como um boolean (Visto que eles são professores) de forma que sempre que algum coordenador quiser tornar outro professor coordenador o seu boolean se tornará falso enquanto o do outro se tornará verdadeiro (Assim manetendo apenas um coordenador)
 - Possivelmente fazer com que o sistema gere uma senha aleatório para cada usuário durante a criação e envie um email contendo as informações de login (Incluindo a senha).
+- Implementar o docker-compose.
 
 ### Problemas conhecidos:
 - Possível falha no scan de componentes realizado pelo Spring. Apesar de todos estarem em pacotes no mesmo nível do inicializador, ele não consegue achar as classes do pacote de repositories (Solução temporária foi adicionar uma annotation no inicializador).
