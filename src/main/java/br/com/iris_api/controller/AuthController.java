@@ -3,6 +3,7 @@ package br.com.iris_api.controller;
 import java.time.Instant;
 import java.util.Collections;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,16 +22,18 @@ import br.com.iris_api.service.UserService;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-	private final JwtEncoder jwtEncoder;
+	@Autowired
+	private JwtEncoder jwtEncoder;
+	
+	@Autowired
+	private UserService userService;
 	
 	public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 	
-	private UserService userService;
 	
-	public AuthController(JwtEncoder jwtEncoder, UserService userService) {
-		this.jwtEncoder = jwtEncoder;
-		this.userService = userService;
-	}
+//	public AuthController(JwtEncoder jwtEncoder, UserService userService) {
+//		this.jwtEncoder = jwtEncoder;
+//	}
 	
 	@PostMapping("/login")
 	public ResponseEntity login(LoginDTO loginDTO) {
