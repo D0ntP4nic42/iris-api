@@ -22,7 +22,7 @@ O sistema tem como objetivo auxiliar e substituir parte do trabalho manual reali
 **Raquel Pereira**: Desenvolvimento de todo Front-end relacionado ao acesso de alunos ao sistema (Github: ) \
 
 ## Equipe Backend:
-**Leonardo Brito**: Desenvolvimento (Github: https://github.com/D0ntP4nic42)
+**Leonardo Brito**: Desenvolvimento (Github: https://github.com/D0ntP4nic42)  
 **Breno Amorim**: Desenvolvimento (Github: ) 
 
 ## Como rodar nosso projeto
