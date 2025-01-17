@@ -2,7 +2,7 @@
 Sistema **Íris** de gerenciamento acadêmico.
 
 ## Objetivo do sistema
-O sistema tem como objetivo auxiliar e substituir parte do trabalho manual realizado pelos servidores do **CEDLAN**, facilitando o gerenciamento de notas e de turmas das disciplinas eletivas (antes feito por uma tabela no Excel). O sistema será desenvolvido por 3 grupos divididos entre Front-end, Back-end e o banco de dados/servidor. Nosso grupo irá desenvolver o Front-end.
+O sistema tem como objetivo auxiliar e substituir parte do trabalho manual realizado pelos servidores do **CEDLAN**, facilitando o gerenciamento de notas e de turmas das disciplinas eletivas (antes feito por uma tabela no Excel). O sistema será desenvolvido por 3 grupos divididos entre Frontend, Backend e o banco de dados/servidor. Esse repositório contém o Backend.
 
 ## Tecnologias Frontend:
 - **Svelte**
