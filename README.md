@@ -56,7 +56,7 @@ O projeto agora está rodando, basta abrir o navegador no localhost com a porta 
 ## Detalhes do desenvolvimento (Backend):
 Nosso projeto utiliza Spring Security com OAuth2 (chaves RSA) como forma de segurança.  
   
-Ao iniciar o projeto é feita a inserção de um professor que tem suas informações fornecidas ao programa através do **application.properties**.  
+Ao iniciar o projeto é feita a inserção de um professor que tem suas informações fornecidas ao programa através do **application.properties** (Admin padrão: cpf = 882.354.885-31, senha = 1234).  
 
 Boa parte do desenvolvimento da segurança foi feito com base no vídeo: https://www.youtube.com/watch?v=nDst-CRKt_k
 
@@ -94,3 +94,21 @@ Uma annotation que deve ser utilizada em todo endpoint que requer segurança par
 
 #### Roles enum:
 Um enum de roles presente no pacote de security é basicamente uma lista de roles com descrições para padronizar o uso por todo o código. Utilizando *"Role.COORDENADOR.name()"* por exemplo, você coloca a role do usúario como coordenador.
+
+### Comandos/argumentos úteis:
+Alguns comandos diversos que podem ser úteis
+
+#### Comandos de inicialização do docker:
+```
+docker-compose -f docker-compose-local.yml up --build -d mysql
+```
+Existem três argumentos nesse comando que podem ser úteis por diversas razões.
+
+* -f docker-compose-local.yml:
+    * Caso haja mais de um ambiente (exemplo: produção e desenvolvimento) esse comando ajuda a separar os composes de cada ambiente.
+* -d:
+    * Um comando simples para dar "detach" do container no console que você executou o comando, "desvinculando" o container do console e liberando ele assim que subir.
+* admin-backend:
+    * Possivelmente o mais útil dos 3. Serve para indicar ao docker que você quer subir apenas **UM** serviço presente no respectivo compose (Caso o compose já tenha sido executado anteriormente e esteja em pé, apenas o serviço escolhido será reiniciado, os outros permanecerão iguais).
+
+O resultado final do comando em questão em nosso projeto seria apenas um container com o nosso banco.
