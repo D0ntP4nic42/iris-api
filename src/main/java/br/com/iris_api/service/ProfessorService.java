@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import br.com.iris_api.dto.ProfessorRegisterDTO;
 import br.com.iris_api.entity.Professor;
 import br.com.iris_api.repository.ProfessorRepository;
+import br.com.iris_api.security.Role;
 
 @Service
 public class ProfessorService {
@@ -17,17 +18,17 @@ public class ProfessorService {
 	private ProfessorRepository professorRepository;
 
 	public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
+	
+	public Iterable<Professor> listar() {
+		return professorRepository.findAll();
+	}
 
 	public Optional<Professor> findByUsername(String cpf) {
 		return professorRepository.findByCpf(cpf);
 	}
 
 	public Professor salvar(ProfessorRegisterDTO professorDTO) {
-		if (professorRepository.findByCpf(professorDTO.cpf()).isPresent()) {
-			throw new RuntimeException("CPF já cadastrado");
-		}
-
-		var professor = new Professor(professorDTO.isCoordenador(), professorDTO.nome(), professorDTO.cpf(),
+		var professor = new Professor(false, professorDTO.nome(), professorDTO.cpf(),
 				professorDTO.email(), PASSWORD_ENCODER.encode(professorDTO.senha()));
 		return professorRepository.save(professor);
 	}
@@ -37,5 +38,12 @@ public class ProfessorService {
 		if (professor.isPresent()) {
 			professorRepository.delete(professor.get());
 		}
+	}
+	
+	public void alterarCoordenador(Professor professor, Professor professorLogado) {
+		professor.setRole(Role.COORDENADOR.name());
+		professorRepository.save(professor);
+		professorLogado.setRole(Role.PROFESSOR.name());
+		professorRepository.save(professorLogado);
 	}
 }
