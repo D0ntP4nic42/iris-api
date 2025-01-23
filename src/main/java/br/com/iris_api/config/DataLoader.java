@@ -6,13 +6,14 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
-import br.com.iris_api.dto.ProfessorRegisterDTO;
-import br.com.iris_api.service.ProfessorService;
+import br.com.iris_api.entity.Professor;
+import br.com.iris_api.repository.ProfessorRepository;
+import br.com.iris_api.security.Role;
 
 @Component
 public class DataLoader implements ApplicationRunner {
 	@Autowired
-	private ProfessorService professorService;
+	private ProfessorRepository professorRepository;
 
 	@Value("${user.name.admin}")
 	private String NAME_ADMIN;
@@ -28,11 +29,12 @@ public class DataLoader implements ApplicationRunner {
 
 	@Override
 	public void run(ApplicationArguments args) {
-		var professor = professorService.findByUsername(CPF_ADMIN);
-		if (professor.isPresent()) {
-			System.out.println("===== Usuário admin já cadastrado =====");
+		var professor = professorRepository.findByCpf(CPF_ADMIN);
+		if (professor.isPresent() || professorRepository.existsByRole(Role.COORDENADOR.name())) {
+			System.out.println("\n\n ===== Usuário admin já cadastrado ou Coordenador já existe ===== \n\n");
 			return;
 		}
-		professorService.salvar(new ProfessorRegisterDTO(true, NAME_ADMIN, CPF_ADMIN, EMAIL_ADMIN, PASSWORD_ADMIN));
+		professorRepository.save(new Professor(true, NAME_ADMIN, CPF_ADMIN, EMAIL_ADMIN, PASSWORD_ADMIN));
+		System.out.println("\n\n ===== Usuário admin cadastrado com sucesso ===== \n\n");
 	}
 }
