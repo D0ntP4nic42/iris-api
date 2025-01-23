@@ -30,11 +30,6 @@ public class AuthController {
 	
 	public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 	
-	
-//	public AuthController(JwtEncoder jwtEncoder, UserService userService) {
-//		this.jwtEncoder = jwtEncoder;
-//	}
-	
 	@PostMapping("/login")
 	public ResponseEntity login(LoginDTO loginDTO) {
 		var user = userService.findByUsername(loginDTO.cpf());
@@ -56,7 +51,7 @@ public class AuthController {
 		
 		var claims = JwtClaimsSet.builder()
 				.issuer("iris-api")
-				.subject(user.getId().toString())
+				.subject(user.getCpf().toString())
 				.issuedAt(now)
 				.claim("role", user.getRole())
 				.expiresAt(now.plusSeconds(expiresIn))
