@@ -1,7 +1,10 @@
 package br.com.iris_api.entity;
 
+import br.com.iris_api.security.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,12 +34,11 @@ public class User {
 	private String senha;
 	
 	@Column(nullable = false)
-	private String role;
+    private String role;
 	
 	public User() {}
 
 	public User(String nome, String cpf, String email, String senha, String role) {
-		super();
 		this.nome = nome;
 		this.cpf = cpf;
 		this.email = email;
