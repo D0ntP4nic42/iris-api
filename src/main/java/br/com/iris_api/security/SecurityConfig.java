@@ -39,6 +39,7 @@ public class SecurityConfig {
 		http
 				.authorizeHttpRequests(authorizeRequests -> authorizeRequests
 						.requestMatchers(HttpMethod.POST, "/auth/*").permitAll()
+						.requestMatchers("/professor/**").hasAnyRole("PROFESSOR", "COORDENADOR")
 						.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 						.anyRequest().authenticated()
 				)
