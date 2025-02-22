@@ -25,7 +25,7 @@ import jakarta.persistence.EntityManagerFactory;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(entityManagerFactoryRef = "entityManagerFactory", basePackages = {
-		"br.gov.cade.apiscade.repository" })
+		"br.com.iris_api.repository" })
 public class DatasourceProperties {
 
 	@Autowired
