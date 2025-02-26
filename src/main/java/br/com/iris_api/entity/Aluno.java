@@ -33,8 +33,8 @@ public class Aluno extends User {
 		super();
 	}
 
-	public Aluno(String nome, String cpf, String email, String senha, String matricula, String curso) {
-		super(nome, cpf, email, senha, Role.ALUNO.name());
+	public Aluno(String nome, String cpf, String senha, String matricula, String curso) {
+		super(nome, cpf, senha, Role.ALUNO.name());
 		this.matricula = matricula;
 		this.curso = curso;
 		this.turmas = new ArrayList<>();

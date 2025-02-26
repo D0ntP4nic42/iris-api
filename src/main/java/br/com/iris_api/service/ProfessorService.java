@@ -28,8 +28,7 @@ public class ProfessorService {
 	}
 
 	public Professor salvar(ProfessorRegisterDTO professorDTO) {
-		var professor = new Professor(false, professorDTO.nome(), professorDTO.cpf(),
-				professorDTO.email(), PASSWORD_ENCODER.encode(professorDTO.senha()));
+		var professor = new Professor(false, professorDTO.nome(), professorDTO.cpf(), PASSWORD_ENCODER.encode(professorDTO.senha()));
 		return professorRepository.save(professor);
 	}
 
