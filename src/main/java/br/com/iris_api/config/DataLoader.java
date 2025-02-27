@@ -25,9 +25,6 @@ public class DataLoader implements ApplicationRunner {
 	@Value("${user.cpf.admin}")
 	private String CPF_ADMIN;
 
-	@Value("${user.email.admin}")
-	private String EMAIL_ADMIN;
-
 	@Value("${user.password.admin}")
 	private String PASSWORD_ADMIN;
 
