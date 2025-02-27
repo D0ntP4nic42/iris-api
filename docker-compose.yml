@@ -4,8 +4,6 @@ services:
     image: mysql
     ports:
       - "3306:3306"
-    expose:
-      - "3306"
     environment:
       - MYSQL_DATABASE=iris
       - MYSQL_ROOT_PASSWORD=1234
@@ -16,7 +14,18 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
+  iris-api:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on: 
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/iris
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 1234
+    networks:
+      - iris_network
 networks:
   iris_network:
     driver: bridge
