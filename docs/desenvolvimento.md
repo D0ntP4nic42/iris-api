@@ -38,11 +38,24 @@ Classe que armazena configurações do banco, sintáxe um pouco complicada e pod
 #### OpenApiConfiguration.java:
 Uma classe para configuração do Swagger, em geral, pode ser ignorada.
 
-#### @SecurityRequirement(name = "bearerAuth"):  
-Uma annotation que deve ser utilizada em todo endpoint que requer segurança para informar o Swagger que ele deve passar o token no header da requisição. Caso todos os endpoints de um controller precisem de autenticação, a annotation pode ser utilizada no próprio controller para evitar repetição.
-
 #### Roles enum:
 Um enum de roles presente no pacote de security é basicamente uma lista de roles com descrições para padronizar o uso por todo o código. Utilizando *"Role.COORDENADOR.name()"* por exemplo, você coloca a role do usúario como coordenador.
+
+#### SecurityConfig.jwtAuthenticationConverter():
+Essa função converte as roles do usuário que fez a autenticação para **GrantedAuthorities** basicamente adicionando "ROLE_" como prefixo na role do usuário. Era possível simplesmente utilizar o prefixo no enum porém ele iria ser passado pro fontend por meio do token, fazendo com essa função o frontend provavelmente terá que fazer menos alterações (possivelmente nenhuma) para se adaptar.
+
+### Padronização de Controllers:
+Os controllers devem ser com alguns padrões em mente.
+
+* Os endpoints de um controller devem ser ações que a entidade daquele controller consiga realizar. Por exemplo, o controller de coordenador tem endpoint para deletar professor e para buscar professor, por mais que essas ações estejam relacionadas a entity professor quem realiza elas é o coordenador. O professor também possui um endpoint para deletar, porém com outras funções, o endpoint de deletar do professor não permite que ele delete outros professores, apenas o que mandou a requisição. Isso resulta em alguns métodos repetidos mas em geral ajuda a gerenciar permissões.  
+
+* @SecurityRequirement(name = "bearerAuth") deve ser utilizado sempre que algum endpoint precise de um token no header. Essa annotation serve para informar o Swagger que ele deve passar o token no header da requisição. Caso todos os endpoints de um controller precisem de autenticação, a annotation pode ser utilizada no próprio controller para evitar repetição.
+
+* A resposta que o backend fornece deve utilizar uma função do collections para mandar mensagens (caso a resposta já não tenha body e seja um simples retorno). A função utilizada é ```Collections.singletonMap()```, ela deve receber como argumento uma string "mensagem" para indicar o nome do campo que será retornado (Como existem vários retornos desse em cada controller é interessante fazer uma constante que armazene a string "mensagem") e a mensagem em si. Como por exemplo:
+
+    ```java
+    return ResponseEntity.badRequest().body(Collections.singletonMap(RESPONSE_FIELD_NOME, "CPF já cadastrado"));
+    ```  
 
 ### Comandos/argumentos úteis:
 Alguns comandos diversos que podem ser úteis
