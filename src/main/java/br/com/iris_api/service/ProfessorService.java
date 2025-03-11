@@ -1,5 +1,6 @@
 package br.com.iris_api.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class ProfessorService {
 
 	public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 	
-	public Iterable<Professor> listar() {
+	public List<Professor> listar() {
 		return professorRepository.findAll();
 	}
 
