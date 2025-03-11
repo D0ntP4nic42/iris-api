@@ -3,6 +3,7 @@ package br.com.iris_api.security;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -12,11 +13,13 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 
@@ -39,7 +42,8 @@ public class SecurityConfig {
 		http
 				.authorizeHttpRequests(authorizeRequests -> authorizeRequests
 						.requestMatchers(HttpMethod.POST, "/auth/*").permitAll()
-						.requestMatchers("/professor/**").hasAnyRole("PROFESSOR", "COORDENADOR")
+						.requestMatchers("/professor/**").hasAnyRole(Role.COORDENADOR.name(), Role.PROFESSOR.name())
+						.requestMatchers("/coordenador/**").hasAnyRole(Role.COORDENADOR.name())
 						.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 						.anyRequest().authenticated()
 				)
@@ -72,5 +76,17 @@ public class SecurityConfig {
 	@Bean
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
 		return new BCryptPasswordEncoder();
+	}
+	
+	@Bean
+	public JwtAuthenticationConverter jwtAuthenticationConverter() {
+	    JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+	    converter.setJwtGrantedAuthoritiesConverter(jwt -> {
+	        List<String> roles = jwt.getClaimAsStringList("role");
+	        return roles.stream()
+	                    .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+	                    .collect(Collectors.toList());
+	    });
+	    return converter;
 	}
 }
