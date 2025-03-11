@@ -1,5 +1,7 @@
 package br.com.iris_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,6 +26,7 @@ public class User {
 	@Column(nullable = false, unique = true)
 	private String cpf;
 
+	@JsonIgnore
 	@Column(nullable = false)
 	private String senha;
 	
