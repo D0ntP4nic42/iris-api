@@ -25,8 +25,20 @@ public class CoordenadorService {
 
 	public Turma cadastrarTurma(TurmaDTO turmaDTO){
 
-		var turma = new Turma(turmaDTO.identificador(), turmaDTO.professor(), turmaDTO.sala(), turmaDTO.disciplina());
+		var professor = professorRepository.findByCpf(turmaDTO.professorCPF());
 
-		return turmaRepository.save(turma);
+		if(professor.isEmpty()) {
+
+			throw new IllegalArgumentException("Professor não encontrado");
+		}
+		else{
+
+			var professorTurma = professor.get();
+
+			var turma = new Turma(turmaDTO.identificador(), professorTurma, turmaDTO.sala(), turmaDTO.disciplina());
+			return turmaRepository.save(turma);
+
+		}
+
 	}
 }

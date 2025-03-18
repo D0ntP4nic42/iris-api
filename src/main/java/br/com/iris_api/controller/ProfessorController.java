@@ -52,7 +52,7 @@ public class ProfessorController {
 			return ResponseEntity.ok().body(professor.get());
 		} catch (Exception e) {
 			e.printStackTrace();
-			return ResponseEntity.badRequest().body(Collections.singletonMap(RESPONSE_FIELD_NAME, "Erro ao buscar professor"));
+			return ResponseEntity.badRequest().body(Collections.singletonMap(RESPONSE_FIELD_NAME, "Erro ao buscar professorCPF"));
 		}
 	}
 
@@ -72,7 +72,7 @@ public class ProfessorController {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			return ResponseEntity.badRequest().body(Collections.singletonMap(RESPONSE_FIELD_NAME, "Erro ao alterar professor"));
+			return ResponseEntity.badRequest().body(Collections.singletonMap(RESPONSE_FIELD_NAME, "Erro ao alterar professorCPF"));
 		}
 	}
 

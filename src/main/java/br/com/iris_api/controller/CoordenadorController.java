@@ -54,7 +54,7 @@ public class CoordenadorController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.badRequest()
-					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro ao buscar professor"));
+					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro ao buscar professorCPF"));
 		}
 	}
 
@@ -76,7 +76,7 @@ public class CoordenadorController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.badRequest()
-					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro ao registrar professor"));
+					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro ao registrar professorCPF"));
 		}
 	}
 
@@ -117,7 +117,7 @@ public class CoordenadorController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.badRequest()
-					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro ao remover professor"));
+					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro ao remover professorCPF"));
 		}
 	}
 
@@ -138,14 +138,14 @@ public class CoordenadorController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.badRequest()
-					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro ao alterar professor"));
+					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro ao alterar professorCPF"));
 		}
 	}
 
 	@PostMapping("/cadastrar-turma")
 	public ResponseEntity cadastrarTurma(@RequestBody TurmaDTO turmaDTO) {
 		try {
-			var professor = professorService.findByUsername(turmaDTO.professor().getCpf());
+			var professor = professorService.findByUsername(turmaDTO.professorCPF());
 
 			if (professor.isEmpty()) {
 				return ResponseEntity.badRequest()
