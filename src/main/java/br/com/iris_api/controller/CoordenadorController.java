@@ -142,6 +142,7 @@ public class CoordenadorController {
 		}
 	}
 
+	@PostMapping("/cadastrar-turma")
 	public ResponseEntity cadastrarTurma(@RequestBody TurmaDTO turmaDTO) {
 		try {
 			var professor = professorService.findByUsername(turmaDTO.professor().getCpf());

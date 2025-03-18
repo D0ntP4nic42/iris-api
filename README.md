@@ -23,7 +23,7 @@ O sistema tem como objetivo auxiliar e substituir parte do trabalho manual reali
 
 ## Equipe Backend:
 **Leonardo Brito**: Desenvolvimento (Github: https://github.com/D0ntP4nic42)  
-**Breno Amorim**: Desenvolvimento (Github: ) 
+**Breno Amorim**: Desenvolvimento (Github: https://github.com/brenoakese) 
 
 ## Como rodar nosso projeto
 Para rodar nosso projeto basta clonar o respositório com:
