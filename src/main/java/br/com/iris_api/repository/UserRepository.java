@@ -9,5 +9,5 @@ import br.com.iris_api.entity.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-	public Optional<User> findByCpf(String cpf);
+	 Optional<User> findByCpf(String cpf);
 }

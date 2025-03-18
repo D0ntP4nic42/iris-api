@@ -3,6 +3,7 @@ package br.com.iris_api.service;
 import java.util.List;
 import java.util.Optional;
 
+import br.com.iris_api.entity.Turma;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -45,5 +46,10 @@ public class ProfessorService {
 		professorRepository.save(professor);
 		professorLogado.setRole(Role.PROFESSOR.name());
 		professorRepository.save(professorLogado);
+	}
+
+	public void adicionarTurma(Professor professor, Turma turma) {
+		professor.addTurma(turma);
+		professorRepository.save(professor);
 	}
 }
