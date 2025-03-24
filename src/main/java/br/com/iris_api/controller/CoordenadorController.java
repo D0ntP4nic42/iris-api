@@ -2,19 +2,27 @@ package br.com.iris_api.controller;
 
 import java.security.Principal;
 import java.util.Collections;
-import java.util.Optional;
 
-import br.com.iris_api.dto.TurmaDTO;
-import br.com.iris_api.entity.Professor;
-import br.com.iris_api.service.TurmaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import br.com.iris_api.dto.ProfessorRegisterDTO;
+import br.com.iris_api.dto.TurmaDTO;
+import br.com.iris_api.entity.Professor;
 import br.com.iris_api.service.CoordenadorService;
 import br.com.iris_api.service.ProfessorService;
+import br.com.iris_api.service.TurmaService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 
 @RestController
 @RequestMapping("/coordenador")
@@ -27,8 +35,8 @@ public class CoordenadorController {
 	@Autowired
 	private CoordenadorService coordenadorService;
 
-    @Autowired
-    private TurmaService turmaService;
+	@Autowired
+	private TurmaService turmaService;
 
 	@GetMapping("/professores")
 	public ResponseEntity listarProfessores() {
@@ -44,28 +52,24 @@ public class CoordenadorController {
 	@GetMapping("/professores/{cpf}")
 	public ResponseEntity infoProfessor(@PathVariable String cpf) {
 		try {
-			Optional<Professor>professor = professorService.findByUsername(cpf);
+			Professor professor = professorService.findByUsername(cpf)
+					.orElseThrow(() -> new EntityNotFoundException("Professor não encontrado"));
 
-			if (professor.isEmpty()) {
-				return ResponseEntity.badRequest()
-						.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Professor não encontrado"));
-			}
-			return ResponseEntity.ok().body(professor.get());
+			return ResponseEntity.ok().body(professor);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.badRequest()
-					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro ao buscar professorCPF"));
+					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro ao buscar professor"));
 		}
 	}
 
 	@PostMapping("/registrar-professor")
 	public ResponseEntity registrarProfessor(@RequestBody ProfessorRegisterDTO professorDTO) {
 		try {
-			 var professor = professorService.findByUsername(professorDTO.cpf());
+			var professor = professorService.findByUsername(professorDTO.cpf());
 
 			if (professor.isPresent()) {
-				return ResponseEntity.badRequest()
-						.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "CPF já cadastrado"));
+				throw new EntityExistsException("Professor já cadastrado");
 			}
 
 			professorService.salvar(professorDTO);
@@ -85,14 +89,10 @@ public class CoordenadorController {
 		var professorLogado = professorService.findByUsername(principal.getName());
 
 		try {
-			var professor = professorService.findByUsername(cpf);
+			var professor = professorService.findByUsername(cpf)
+					.orElseThrow(() -> new EntityNotFoundException("Professor não encontrado"));
 
-			if (professor.isEmpty()) {
-				return ResponseEntity.badRequest()
-						.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Professor não encontrado"));
-			}
-
-			professorService.alterarCoordenador(professor.get(), professorLogado.get());
+			professorService.alterarCoordenador(professor, professorLogado.get());
 
 			return ResponseEntity.ok()
 					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Coordenador alterado com sucesso"));
@@ -106,14 +106,13 @@ public class CoordenadorController {
 
 	@DeleteMapping("/deletar-professor/{cpf}")
 	public ResponseEntity deletarProfessor(@PathVariable String cpf) {
-		if (professorService.findByUsername(cpf).get().getRole().equals("COORDENADOR")) {
-			return ResponseEntity.badRequest().body(
-					Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro, não é possível deletar o coordenador"));
-		}
 		try {
-			if (professorService.findByUsername(cpf).isEmpty()) {
-				return ResponseEntity.badRequest()
-						.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Professor não encontrado"));
+			Professor professor = professorService.findByUsername(cpf)
+					.orElseThrow(() -> new EntityNotFoundException("Professor não encontrado"));
+
+			if (professor.getRole().equals("COORDENADOR")) {
+				return ResponseEntity.badRequest().body(
+						Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro, não é possível deletar o coordenador"));
 			}
 			professorService.deletar(cpf);
 			return ResponseEntity.ok()
@@ -128,11 +127,8 @@ public class CoordenadorController {
 	@PutMapping("/alterar-professor")
 	public ResponseEntity alterarProfessor(@RequestBody ProfessorRegisterDTO professorDTO) {
 		try {
-			var professor = professorService.findByUsername(professorDTO.cpf());
-			if (professor.isEmpty()) {
-				return ResponseEntity.badRequest()
-						.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Professor não encontrado"));
-			}
+			var professor = professorService.findByUsername(professorDTO.cpf())
+					.orElseThrow(() -> new EntityNotFoundException("Professor não encontrado"));
 
 			professorService.salvar(professorDTO);
 
@@ -149,38 +145,27 @@ public class CoordenadorController {
 	@PostMapping("/cadastrar-turma")
 	public ResponseEntity cadastrarTurma(@RequestBody TurmaDTO turmaDTO) {
 		try {
-			var professor = professorService.findByUsername(turmaDTO.professorCPF());
+			var professor = professorService.findByUsername(turmaDTO.professorCPF())
+					.orElseThrow(() -> new EntityNotFoundException("Professor não encontrado"));
 
-			if (professor.isEmpty()) {
-				return ResponseEntity.badRequest()
-						.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Professor não encontrado"));
-			}
+			var turma = coordenadorService.cadastrarTurma(turmaDTO);
 
-			coordenadorService.cadastrarTurma(turmaDTO);
-
-			var turma = turmaService.listaTurmaPorIdentificador(turmaDTO.identificador());
-
-			if (turma.isEmpty()) {
+			if (turma == null) {
 				return ResponseEntity.badRequest()
 						.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro ao cadastrar turma"));
 			}
-			else {
+			
+			professorService.adicionarTurma(professor, turma);
 
-                var turmaProfessor = professor.get();
-                var turma1 = turma.get();
+			return ResponseEntity.ok()
+					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Turma cadastrada com sucesso"));
 
-                professorService.adicionarTurma(turmaProfessor,turma1);
-
-                return ResponseEntity.ok().body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Turma cadastrada com sucesso"));
-            }
-
-
-		}catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.badRequest()
 					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro ao cadastrar turma"));
 		}
 
-    }
+	}
 
 }
