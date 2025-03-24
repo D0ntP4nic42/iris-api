@@ -106,6 +106,10 @@ public class CoordenadorController {
 
 	@DeleteMapping("/deletar-professor/{cpf}")
 	public ResponseEntity deletarProfessor(@PathVariable String cpf) {
+		if (professorService.findByUsername(cpf).get().getRole().equals("COORDENADOR")) {
+			return ResponseEntity.badRequest().body(
+					Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro, não é possível deletar o coordenador"));
+		}
 		try {
 			if (professorService.findByUsername(cpf).isEmpty()) {
 				return ResponseEntity.badRequest()
