@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface TurmaRepository extends JpaRepository<Turma, Long> {
 
     public Optional<Turma> findByIdentificador(String identificador);
+    public Optional<Turma> deleteTurmaByIdentificador(String identificador);
 }

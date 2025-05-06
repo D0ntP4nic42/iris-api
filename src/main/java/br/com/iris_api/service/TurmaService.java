@@ -23,7 +23,14 @@ public class TurmaService {
         return turmaRepository.findAll();
     }
 
-    public Optional<Turma> listaTurmaPorIdentificador(String identificador){
+    public void deletarTurma(String identificador){
+        var turma = turmaRepository.findByIdentificador(identificador);
+        if (turma.isPresent()) {
+            turmaRepository.deleteTurmaByIdentificador(identificador);
+        }
+    }
+
+    public Optional<Turma> findByIdentificador(String identificador){
         return turmaRepository.findByIdentificador(identificador);
     }
 }
