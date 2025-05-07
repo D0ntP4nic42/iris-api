@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,6 +24,9 @@ import br.com.iris_api.service.UserService;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+	@Autowired
+	private Environment env;
+	
 	@Autowired
 	private JwtEncoder jwtEncoder;
 	
@@ -48,7 +52,7 @@ public class AuthController {
 	
 	private String gerarAccessToken(User user) {
 		var now = Instant.now();
-		var expiresIn = 300L;
+		var expiresIn = env.getActiveProfiles()[0].equals("local") ? 86400 : 3600;
 		
 		var claims = JwtClaimsSet.builder()
 				.issuer("iris-api")
