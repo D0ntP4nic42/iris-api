@@ -22,13 +22,14 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/professores")
 @SecurityRequirement(name = "bearerAuth")
+@Tag(name = "Professor", description = "Operações chamadas por professores")
 public class ProfessorController {
 
-	private static final String RESPONSE_FIELD_NAME = "mensagem";
 	@Autowired
 	private ProfessorService professorService;
 
