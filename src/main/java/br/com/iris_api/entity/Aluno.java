@@ -18,25 +18,17 @@ import jakarta.persistence.Table;
 public class Aluno extends User {
 	@Column(nullable = false, unique = true)
 	private String matricula;
-	@Column(nullable = false)
-	private String curso;
 	
 	@ManyToMany(mappedBy = "alunos")
 	private List<Turma> turmas;
 	
-	@OneToMany
-	@JoinColumn(name = "aluno_id")
-	@JsonBackReference
-	private List<Atividade> atividades;
-
 	public Aluno() {
 		super();
 	}
 
-	public Aluno(String nome, String cpf, String senha, String matricula, String curso) {
+	public Aluno(String nome, String cpf, String senha, String matricula) {
 		super(nome, cpf, senha, Role.ALUNO.name());
 		this.matricula = matricula;
-		this.curso = curso;
 		this.turmas = new ArrayList<>();
 	}
 
@@ -61,14 +53,6 @@ public class Aluno extends User {
 		this.matricula = matricula;
 	}
 
-	public String getCurso() {
-		return curso;
-	}
-
-	public void setCurso(String curso) {
-		this.curso = curso;
-	}
-	
 	public List<Turma> getTurmas() {
 		return turmas;
 	}

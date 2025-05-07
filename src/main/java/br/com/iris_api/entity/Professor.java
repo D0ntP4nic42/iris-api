@@ -22,11 +22,6 @@ public class Professor extends User {
 	@JsonBackReference
 	private List<Turma> turmas;
 
-	@OneToMany
-	@JoinColumn(name = "professor_id")
-	@JsonBackReference
-	private List<Atividade> atividades;
-	
 	public Professor() {}
 	
 	public Professor(boolean isCoordenador, String nome, String cpf, String senha) {
@@ -36,5 +31,17 @@ public class Professor extends User {
 	
 	public void addTurma(Turma turma) {
 		this.turmas.add(turma);
+	}
+	
+	public void removeTurma(Turma turma) {
+		this.turmas.remove(turma);
+	}
+	
+	public void clearTurmas() {
+		this.turmas.clear();
+	}
+	
+	public List<Turma> getTurmas() {
+		return turmas;
 	}
 }

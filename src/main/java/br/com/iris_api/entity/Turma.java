@@ -1,11 +1,22 @@
 package br.com.iris_api.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "turmas")
@@ -23,23 +34,27 @@ public class Turma {
 	@Column
 	private String disciplina;
 
-	@Column
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "turma", cascade = CascadeType.ALL)
-	private List<Horario> horarios;
-
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "professor_id")
 	@JsonManagedReference
 	private Professor professor;
 
-	@ManyToMany
+	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
 	@JoinTable(name = "turma_aluno", joinColumns = @JoinColumn(name = "turma_id"), inverseJoinColumns = @JoinColumn(name = "aluno_id"))
 	List<Aluno> alunos;
-
-	@OneToMany
-	@JoinTable(name = "turma_horarios", joinColumns = @JoinColumn(name = "turma_id"), inverseJoinColumns = @JoinColumn(name = "horario_id"))
-	@JsonBackReference
-	private List<Atividade> atividades;
+	
+	public Turma() {
+		super();
+	}
+	
+	public Turma(String identificador, String sala, String disciplina, Professor professor) {
+		super();
+		this.identificador = identificador;
+		this.sala = sala;
+		this.disciplina = disciplina;
+		this.professor = professor;
+		this.alunos = new ArrayList<Aluno>();
+	}
 
 	// Getters e setters
 	public Long getId() {
@@ -89,8 +104,4 @@ public class Turma {
 	public void setAlunos(List<Aluno> alunos) {
 		this.alunos = alunos;
 	}
-
-	public Turma(String identificador,Professor professor, String sala, String disciplina) {}
-
-	public Turma() {}
 }
