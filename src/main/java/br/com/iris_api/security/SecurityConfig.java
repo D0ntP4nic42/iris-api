@@ -42,13 +42,15 @@ public class SecurityConfig {
 		http
 				.authorizeHttpRequests(authorizeRequests -> authorizeRequests
 						.requestMatchers(HttpMethod.POST, "/auth/*").permitAll()
-						.requestMatchers("/professor/**").hasAnyRole(Role.COORDENADOR.name(), Role.PROFESSOR.name())
+						.requestMatchers(HttpMethod.POST, "/aluno").permitAll()
+						.requestMatchers("/aluno").hasAnyRole(Role.ALUNO.name())
+						.requestMatchers("/professores/**").hasAnyRole(Role.COORDENADOR.name(), Role.PROFESSOR.name())
 						.requestMatchers("/coordenador/**").hasAnyRole(Role.COORDENADOR.name())
 						.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 						.anyRequest().authenticated()
 				)
 				.csrf(csrf -> csrf.disable())
-				.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(Customizer.withDefaults()))
+				.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
 				.cors(cors -> cors.configurationSource(request -> {
 					var corsConfiguration = new CorsConfiguration();
 					corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173"));
@@ -82,10 +84,8 @@ public class SecurityConfig {
 	public JwtAuthenticationConverter jwtAuthenticationConverter() {
 	    JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
 	    converter.setJwtGrantedAuthoritiesConverter(jwt -> {
-	        List<String> roles = jwt.getClaimAsStringList("role");
-	        return roles.stream()
-	                    .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-	                    .collect(Collectors.toList());
+	        String role = jwt.getClaimAsString("role");
+	        return List.of(new SimpleGrantedAuthority("ROLE_" + role));
 	    });
 	    return converter;
 	}
