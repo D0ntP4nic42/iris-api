@@ -2,6 +2,7 @@ package br.com.iris_api.controller;
 
 import java.security.Principal;
 import java.util.Collections;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,16 +18,24 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.iris_api.dto.ProfessorRegisterDTO;
 import br.com.iris_api.dto.TurmaDTO;
 import br.com.iris_api.entity.Professor;
+import br.com.iris_api.entity.Turma;
 import br.com.iris_api.service.CoordenadorService;
 import br.com.iris_api.service.ProfessorService;
 import br.com.iris_api.service.TurmaService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.websocket.server.PathParam;
 
 @RestController
 @RequestMapping("/coordenador")
 @SecurityRequirement(name = "bearerAuth")
+@Tag(name = "Coordenador", description = "Operações chamadas pelo coordenador")
 public class CoordenadorController {
 	private static final String RESPONSE_FIELD_NOME = "mensagem";
 	@Autowired
@@ -38,147 +47,122 @@ public class CoordenadorController {
 	@Autowired
 	private TurmaService turmaService;
 
+	@Operation(summary = "Listar professores", description = "Retorna a lista de professores cadastrados")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Professores listados com sucesso", content = @Content()),
+			@ApiResponse(responseCode = "500", description = "Um erro ocorreu desconhecido", content = @Content()) })
 	@GetMapping("/professores")
-	public ResponseEntity listarProfessores() {
-		try {
-			return ResponseEntity.ok().body(coordenadorService.listarProfessores());
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.badRequest()
-					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro ao listar professores"));
-		}
+	public ResponseEntity<List<Professor>> listarProfessores() {
+		return ResponseEntity.ok().body(coordenadorService.listarProfessores());
 	}
 
+	@Operation(summary = "Buscar professor por CPF", description = "Retorna as informações de um professor com base no CPF fornecido")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Professor encontrado com sucesso", content = @Content(schema = @Schema(implementation = Professor.class))),
+			@ApiResponse(responseCode = "404", description = "Professor não encontrado", content = @Content()),
+			@ApiResponse(responseCode = "500", description = "Um erro ocorreu desconhecido", content = @Content()) })
 	@GetMapping("/professores/{cpf}")
-	public ResponseEntity infoProfessor(@PathVariable String cpf) {
-		try {
-			Professor professor = professorService.findByUsername(cpf)
-					.orElseThrow(() -> new EntityNotFoundException("Professor não encontrado"));
+	public ResponseEntity<Professor> infoProfessor(@PathVariable String cpf) {
+		var professor = professorService.findByUsername(cpf);
 
-			return ResponseEntity.ok().body(professor);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.badRequest()
-					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro ao buscar professor"));
-		}
+		return ResponseEntity.ok().body(professor);
 	}
 
+	@Operation(summary = "Registrar professor", description = "Cadastra um novo professor com base nas informações fornecidas")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Professor cadastrado com sucesso", content = @Content()),
+			@ApiResponse(responseCode = "400", description = "Professor já cadastrado", content = @Content()),
+			@ApiResponse(responseCode = "500", description = "Um erro ocorreu desconhecido", content = @Content()) })
 	@PostMapping("/registrar-professor")
-	public ResponseEntity registrarProfessor(@RequestBody ProfessorRegisterDTO professorDTO) {
-		try {
-			professorService.salvar(professorDTO);
+	public ResponseEntity<String> registrarProfessor(@RequestBody ProfessorRegisterDTO professorDTO) {
+		professorService.salvar(professorDTO);
 
-			return ResponseEntity.ok()
-					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Professor cadastrado com sucesso"));
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.badRequest()
-					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro ao registrar professor"));
-		}
+		return ResponseEntity.ok().body("Professor cadastrado com sucesso");
 	}
 
+	@Operation(summary = "Alterar coordenador", description = "Altera o coordenador atual para o professor com o CPF fornecido")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Coordenador alterado com sucesso", content = @Content()),
+			@ApiResponse(responseCode = "404", description = "Professor não encontrado ou Professor logado não encontrado", content = @Content()),
+			@ApiResponse(responseCode = "500", description = "Um erro ocorreu desconhecido", content = @Content()) })
 	@PutMapping("/alterar-coordenador")
-	public ResponseEntity alterarCoordenador(@PathParam(value = "cpf") String cpf, Principal principal) {
-		var professorLogado = professorService.findByUsername(principal.getName());
+	public ResponseEntity<String> alterarCoordenador(@PathParam(value = "cpf") String cpf, Principal principal) {
 
-		try {
-			var professor = professorService.findByUsername(cpf)
-					.orElseThrow(() -> new EntityNotFoundException("Professor não encontrado"));
+		professorService.alterarCoordenador(cpf, principal.getName());
 
-			professorService.alterarCoordenador(professor, professorLogado.get());
+		return ResponseEntity.ok().body("Coordenador alterado com sucesso");
 
-			return ResponseEntity.ok()
-					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Coordenador alterado com sucesso"));
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.badRequest()
-					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro ao alterar coordenador"));
-		}
 	}
 
+	@Operation(summary = "Deletar professor", description = "Remove um professor com base no CPF fornecido")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Professor removido com sucesso", content = @Content()),
+			@ApiResponse(responseCode = "400", description = "Erro, não é possível deletar o coordenador", content = @Content()),
+			@ApiResponse(responseCode = "404", description = "Professor não encontrado", content = @Content()),
+			@ApiResponse(responseCode = "500", description = "Um erro ocorreu desconhecido", content = @Content()) })
 	@DeleteMapping("/deletar-professor")
-	public ResponseEntity deletarProfessor(@PathParam(value = "cpf") String cpf) {
-		try {
-			Professor professor = professorService.findByUsername(cpf)
-					.orElseThrow(() -> new EntityNotFoundException("Professor não encontrado"));
+	public ResponseEntity<String> deletarProfessor(@PathParam(value = "cpf") String cpf) {
+		Professor professor = professorService.findByUsername(cpf);
 
-			if (professor.getRole().equals("COORDENADOR")) {
-				return ResponseEntity.badRequest().body(
-						Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro, não é possível deletar o coordenador"));
-			}
-			professorService.deletar(cpf);
-			return ResponseEntity.ok()
-					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Professor removido com sucesso"));
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.badRequest()
-					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro ao remover professorCPF"));
+		if (professor.getRole().equals("COORDENADOR")) {
+			return ResponseEntity.badRequest().body("Erro, não é possível deletar o coordenador");
 		}
+
+		professorService.deletar(cpf);
+
+		return ResponseEntity.ok().body("Professor removido com sucesso");
 	}
 
+	@Operation(summary = "Alterar professor", description = "Altera as informações de um professor com base nas informações fornecidas")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Professor alterado com sucesso", content = @Content()),
+			@ApiResponse(responseCode = "404", description = "Professor não encontrado", content = @Content()),
+			@ApiResponse(responseCode = "500", description = "Um erro ocorreu desconhecido", content = @Content()) })
 	@PutMapping("/alterar-professor")
-	public ResponseEntity alterarProfessor(@RequestBody ProfessorRegisterDTO professorDTO) {
-		try {
-			professorService.salvar(professorDTO);
+	public ResponseEntity<String> alterarProfessor(@RequestBody ProfessorRegisterDTO professorDTO) {
+		professorService.alterar(professorDTO);
 
-			return ResponseEntity.ok()
-					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Professor alterado com sucesso"));
+		return ResponseEntity.ok().body("Professor alterado com sucesso");
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.badRequest()
-					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro ao alterar professorCPF"));
-		}
 	}
-	
+
+	@Operation(summary = "Listar turmas", description = "Retorna a lista de todas as turmas cadastradas com todas as informações")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Turmas listadas com sucesso", content = @Content()),
+			@ApiResponse(responseCode = "500", description = "Um erro ocorreu desconhecido", content = @Content()) })
 	@GetMapping("/turmas")
-	public ResponseEntity listarTurmas() {
-		try {
-			return ResponseEntity.ok().body(turmaService.listarTurmasCoordenador());
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.badRequest()
-					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro ao listar turmas"));
-		}
+	public ResponseEntity<List<Turma>> listarTurmas() {
+		return ResponseEntity.ok().body(turmaService.listarTurmasCoordenador());
 	}
 
+	@Operation(summary = "Cadastrar turma", description = "Cadastra uma nova turma com base nas informações fornecidas")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Turma cadastrada com sucesso", content = @Content()),
+			@ApiResponse(responseCode = "400", description = "Erro ao cadastrar turma", content = @Content()),
+			@ApiResponse(responseCode = "404", description = "Professor não encontrado", content = @Content()),
+			@ApiResponse(responseCode = "500", description = "Um erro ocorreu desconhecido", content = @Content()) })
 	@PostMapping("/cadastrar-turma")
-	public ResponseEntity cadastrarTurma(@RequestBody TurmaDTO turmaDTO) {
-		try {
-			var professor = professorService.findByUsername(turmaDTO.professorCPF())
-					.orElseThrow(() -> new EntityNotFoundException("Professor não encontrado"));
+	public ResponseEntity<String> cadastrarTurma(@RequestBody TurmaDTO turmaDTO) {
+		var turma = turmaService.cadastrarTurma(turmaDTO);
 
-			var turma = coordenadorService.cadastrarTurma(turmaDTO);
-
-			if (turma == null) {
-				return ResponseEntity.badRequest()
-						.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro ao cadastrar turma"));
-			}
-			
-			professorService.adicionarTurma(professor, turma);
-
-			return ResponseEntity.ok()
-					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Turma cadastrada com sucesso"));
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.badRequest()
-					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro ao cadastrar turma"));
+		if (turma == null) {
+			return ResponseEntity.badRequest().body("Erro ao cadastrar turma");
 		}
+
+		professorService.adicionarTurma(turma.getProfessor(), turma);
+
+		return ResponseEntity.ok().body("Turma cadastrada com sucesso");
+
 	}
-	
-	@DeleteMapping("/deletar-turma/{identificador}")
-	public ResponseEntity deletarTurma(@PathParam(value = "identificador") String identificador) {
-		try {
-			turmaService.deletarTurma(identificador);
-			return ResponseEntity.ok()
-					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Turma removida com sucesso"));
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.badRequest()
-					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro ao remover turma"));
-		}
+
+	@Operation(summary = "Remover turma", description = "Remove uma turma com base no identificador fornecido")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Turma removida com sucesso", content = @Content()),
+			@ApiResponse(responseCode = "404", description = "Turma não encontrada", content = @Content()),
+			@ApiResponse(responseCode = "500", description = "Um erro ocorreu desconhecido", content = @Content()) })
+	@DeleteMapping("/deletar-turma")
+	public ResponseEntity<String> deletarTurma(@PathParam(value = "identificador") String identificador) {
+		turmaService.deletarTurma(identificador);
+		return ResponseEntity.ok().body("Turma removida com sucesso");
 	}
 }

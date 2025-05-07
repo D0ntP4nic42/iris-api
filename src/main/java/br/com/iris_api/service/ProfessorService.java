@@ -14,6 +14,7 @@ import br.com.iris_api.entity.Turma;
 import br.com.iris_api.repository.ProfessorRepository;
 import br.com.iris_api.security.Role;
 import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class ProfessorService {
@@ -26,8 +27,10 @@ public class ProfessorService {
 		return professorRepository.findAll();
 	}
 
-	public Optional<Professor> findByUsername(String cpf) {
-		return professorRepository.findByCpf(cpf);
+	public Professor findByUsername(String cpf) {
+		var professor = professorRepository.findByCpf(cpf)
+				.orElseThrow(() -> new EntityNotFoundException("Professor não encontrado"));
+		return professor;
 	}
 
 	public Professor salvar(ProfessorRegisterDTO professorDTO) {
@@ -38,7 +41,7 @@ public class ProfessorService {
 		professorRepository.save(new Professor(false, professorDTO.nome(), professorDTO.cpf(),
 				PASSWORD_ENCODER.encode(professorDTO.senha())));
 		return professorRepository.findByCpf(professorDTO.cpf())
-				.orElseThrow(() -> new EntityExistsException("Erro ao cadastrar professor"));
+				.orElseThrow(() -> new RuntimeException("Erro ao cadastrar professor"));
 	}
 
 	public Professor alterar(ProfessorRegisterDTO professorDTO) {
@@ -50,13 +53,17 @@ public class ProfessorService {
 	}
 
 	public void deletar(String cpf) {
-		var professor = professorRepository.findByCpf(cpf);
-		if (professor.isPresent()) {
-			professorRepository.delete(professor.get());
-		}
+		var professor = professorRepository.findByCpf(cpf).orElseThrow(() -> new EntityNotFoundException("Professor não encontrado"));
+		professorRepository.delete(professor);
 	}
 
-	public void alterarCoordenador(Professor professor, Professor professorLogado) {
+	public void alterarCoordenador(String cpfNovoCoordenador, String cpfProfessorLogado) {
+		var professor = professorRepository.findByCpf(cpfNovoCoordenador)
+				.orElseThrow(() -> new EntityNotFoundException("Professor não encontrado"));
+
+		var professorLogado = professorRepository.findByCpf(cpfProfessorLogado)
+				.orElseThrow(() -> new EntityNotFoundException("Professor logado não encontrado"));
+
 		professor.setRole(Role.COORDENADOR.name());
 		professorRepository.save(professor);
 		professorLogado.setRole(Role.PROFESSOR.name());
@@ -64,6 +71,10 @@ public class ProfessorService {
 	}
 
 	public void adicionarTurma(Professor professor, Turma turma) {
+		if (professor.getTurmas().contains(turma)) {
+			throw new EntityExistsException("Professor já possui a turma");
+		}
+		
 		professor.addTurma(turma);
 		professorRepository.save(professor);
 	}
