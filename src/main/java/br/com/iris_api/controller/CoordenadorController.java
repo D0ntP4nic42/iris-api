@@ -127,9 +127,6 @@ public class CoordenadorController {
 	@PutMapping("/alterar-professor")
 	public ResponseEntity alterarProfessor(@RequestBody ProfessorRegisterDTO professorDTO) {
 		try {
-			var professor = professorService.findByUsername(professorDTO.cpf())
-					.orElseThrow(() -> new EntityNotFoundException("Professor não encontrado"));
-
 			professorService.salvar(professorDTO);
 
 			return ResponseEntity.ok()

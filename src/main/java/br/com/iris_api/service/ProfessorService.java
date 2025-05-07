@@ -13,6 +13,7 @@ import br.com.iris_api.dto.ProfessorRegisterDTO;
 import br.com.iris_api.entity.Professor;
 import br.com.iris_api.repository.ProfessorRepository;
 import br.com.iris_api.security.Role;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class ProfessorService {
@@ -20,7 +21,7 @@ public class ProfessorService {
 	private ProfessorRepository professorRepository;
 
 	public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
-	
+
 	public List<Professor> listar() {
 		return professorRepository.findAll();
 	}
@@ -30,7 +31,10 @@ public class ProfessorService {
 	}
 
 	public Professor salvar(ProfessorRegisterDTO professorDTO) {
-		var professor = new Professor(false, professorDTO.nome(), professorDTO.cpf(), PASSWORD_ENCODER.encode(professorDTO.senha()));
+		var professor = professorRepository.findByCpf(professorDTO.cpf())
+				.orElseThrow(() -> new EntityNotFoundException("Professor não encontrado"));
+		professor.setNome(professorDTO.nome());
+		professor.setSenha(PASSWORD_ENCODER.encode(professorDTO.senha()));
 		return professorRepository.save(professor);
 	}
 
@@ -40,7 +44,7 @@ public class ProfessorService {
 			professorRepository.delete(professor.get());
 		}
 	}
-	
+
 	public void alterarCoordenador(Professor professor, Professor professorLogado) {
 		professor.setRole(Role.COORDENADOR.name());
 		professorRepository.save(professor);
