@@ -27,14 +27,13 @@ public class Professor extends User {
 	@JsonBackReference
 	private List<Atividade> atividades;
 	
-	public Professor() {
-	}
-
+	public Professor() {}
+	
 	public Professor(boolean isCoordenador, String nome, String cpf, String senha) {
 		super(nome, cpf, senha, isCoordenador ? Role.COORDENADOR.name() : Role.PROFESSOR.name()); //expressão ternária, caso isCoordenador seja true, o role será "COORDENADOR", senão, será "PROFESSOR"
 		this.turmas = new ArrayList<>();
 	}
-
+	
 	public void addTurma(Turma turma) {
 		this.turmas.add(turma);
 	}

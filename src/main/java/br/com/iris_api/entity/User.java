@@ -33,15 +33,17 @@ public class User {
 	@Column(nullable = false)
     private String role;
 	
-	public User() {}
-
+	public User() {
+		
+	}
+	
 	public User(String nome, String cpf, String senha, String role) {
 		this.nome = nome;
 		this.cpf = cpf;
 		this.senha = senha;
 		this.role = role;
 	}
-
+	
 	// Getters e setters
 	public Long getId() {
 		return id;
