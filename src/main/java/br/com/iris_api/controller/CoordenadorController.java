@@ -50,7 +50,7 @@ public class CoordenadorController {
 	@Operation(summary = "Listar professores", description = "Retorna a lista de professores cadastrados")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Professores listados com sucesso", content = @Content()),
-			@ApiResponse(responseCode = "500", description = "Um erro ocorreu desconhecido", content = @Content()) })
+			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
 	@GetMapping("/professores")
 	public ResponseEntity<List<Professor>> listarProfessores() {
 		return ResponseEntity.ok().body(coordenadorService.listarProfessores());
@@ -60,7 +60,7 @@ public class CoordenadorController {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Professor encontrado com sucesso", content = @Content(schema = @Schema(implementation = Professor.class))),
 			@ApiResponse(responseCode = "404", description = "Professor não encontrado", content = @Content()),
-			@ApiResponse(responseCode = "500", description = "Um erro ocorreu desconhecido", content = @Content()) })
+			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
 	@GetMapping("/professores/{cpf}")
 	public ResponseEntity<Professor> infoProfessor(@PathVariable String cpf) {
 		var professor = professorService.findByUsername(cpf);
@@ -72,7 +72,7 @@ public class CoordenadorController {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Professor cadastrado com sucesso", content = @Content()),
 			@ApiResponse(responseCode = "400", description = "Professor já cadastrado", content = @Content()),
-			@ApiResponse(responseCode = "500", description = "Um erro ocorreu desconhecido", content = @Content()) })
+			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
 	@PostMapping("/registrar-professor")
 	public ResponseEntity<String> registrarProfessor(@RequestBody ProfessorRegisterDTO professorDTO) {
 		professorService.salvar(professorDTO);
@@ -84,7 +84,7 @@ public class CoordenadorController {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Coordenador alterado com sucesso", content = @Content()),
 			@ApiResponse(responseCode = "404", description = "Professor não encontrado ou Professor logado não encontrado", content = @Content()),
-			@ApiResponse(responseCode = "500", description = "Um erro ocorreu desconhecido", content = @Content()) })
+			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
 	@PutMapping("/alterar-coordenador")
 	public ResponseEntity<String> alterarCoordenador(@PathParam(value = "cpf") String cpf, Principal principal) {
 
@@ -99,7 +99,7 @@ public class CoordenadorController {
 			@ApiResponse(responseCode = "200", description = "Professor removido com sucesso", content = @Content()),
 			@ApiResponse(responseCode = "400", description = "Erro, não é possível deletar o coordenador", content = @Content()),
 			@ApiResponse(responseCode = "404", description = "Professor não encontrado", content = @Content()),
-			@ApiResponse(responseCode = "500", description = "Um erro ocorreu desconhecido", content = @Content()) })
+			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
 	@DeleteMapping("/deletar-professor")
 	public ResponseEntity<String> deletarProfessor(@PathParam(value = "cpf") String cpf) {
 		Professor professor = professorService.findByUsername(cpf);
@@ -117,7 +117,7 @@ public class CoordenadorController {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Professor alterado com sucesso", content = @Content()),
 			@ApiResponse(responseCode = "404", description = "Professor não encontrado", content = @Content()),
-			@ApiResponse(responseCode = "500", description = "Um erro ocorreu desconhecido", content = @Content()) })
+			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
 	@PutMapping("/alterar-professor")
 	public ResponseEntity<String> alterarProfessor(@RequestBody ProfessorRegisterDTO professorDTO) {
 		professorService.alterar(professorDTO);
@@ -129,7 +129,7 @@ public class CoordenadorController {
 	@Operation(summary = "Listar turmas", description = "Retorna a lista de todas as turmas cadastradas com todas as informações")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Turmas listadas com sucesso", content = @Content()),
-			@ApiResponse(responseCode = "500", description = "Um erro ocorreu desconhecido", content = @Content()) })
+			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
 	@GetMapping("/turmas")
 	public ResponseEntity<List<Turma>> listarTurmas() {
 		return ResponseEntity.ok().body(turmaService.listarTurmasCoordenador());
@@ -140,7 +140,7 @@ public class CoordenadorController {
 			@ApiResponse(responseCode = "200", description = "Turma cadastrada com sucesso", content = @Content()),
 			@ApiResponse(responseCode = "400", description = "Erro ao cadastrar turma", content = @Content()),
 			@ApiResponse(responseCode = "404", description = "Professor não encontrado", content = @Content()),
-			@ApiResponse(responseCode = "500", description = "Um erro ocorreu desconhecido", content = @Content()) })
+			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
 	@PostMapping("/cadastrar-turma")
 	public ResponseEntity<String> cadastrarTurma(@RequestBody TurmaDTO turmaDTO) {
 		var turma = turmaService.cadastrarTurma(turmaDTO);
@@ -159,7 +159,7 @@ public class CoordenadorController {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Turma removida com sucesso", content = @Content()),
 			@ApiResponse(responseCode = "404", description = "Turma não encontrada", content = @Content()),
-			@ApiResponse(responseCode = "500", description = "Um erro ocorreu desconhecido", content = @Content()) })
+			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
 	@DeleteMapping("/deletar-turma")
 	public ResponseEntity<String> deletarTurma(@PathParam(value = "identificador") String identificador) {
 		turmaService.deletarTurma(identificador);

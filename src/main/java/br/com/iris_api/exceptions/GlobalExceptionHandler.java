@@ -33,6 +33,6 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> handleGenericException(RuntimeException e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Um erro ocorreu desconhecido");
+                .body("Um erro desconhecido ocorreu");
     }
 }
