@@ -21,8 +21,8 @@ import br.com.iris_api.service.CoordenadorService;
 import br.com.iris_api.service.ProfessorService;
 import br.com.iris_api.service.TurmaService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.websocket.server.PathParam;
 
 @RestController
 @RequestMapping("/coordenador")
@@ -66,12 +66,6 @@ public class CoordenadorController {
 	@PostMapping("/registrar-professor")
 	public ResponseEntity registrarProfessor(@RequestBody ProfessorRegisterDTO professorDTO) {
 		try {
-			var professor = professorService.findByUsername(professorDTO.cpf());
-
-			if (professor.isPresent()) {
-				throw new EntityExistsException("Professor já cadastrado");
-			}
-
 			professorService.salvar(professorDTO);
 
 			return ResponseEntity.ok()
@@ -80,12 +74,12 @@ public class CoordenadorController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.badRequest()
-					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro ao registrar professorCPF"));
+					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro ao registrar professor"));
 		}
 	}
 
-	@PutMapping("/alterar-coordenador/{cpf}")
-	public ResponseEntity alterarCoordenador(@PathVariable String cpf, Principal principal) {
+	@PutMapping("/alterar-coordenador")
+	public ResponseEntity alterarCoordenador(@PathParam(value = "cpf") String cpf, Principal principal) {
 		var professorLogado = professorService.findByUsername(principal.getName());
 
 		try {
@@ -104,8 +98,8 @@ public class CoordenadorController {
 		}
 	}
 
-	@DeleteMapping("/deletar-professor/{cpf}")
-	public ResponseEntity deletarProfessor(@PathVariable String cpf) {
+	@DeleteMapping("/deletar-professor")
+	public ResponseEntity deletarProfessor(@PathParam(value = "cpf") String cpf) {
 		try {
 			Professor professor = professorService.findByUsername(cpf)
 					.orElseThrow(() -> new EntityNotFoundException("Professor não encontrado"));
@@ -138,6 +132,17 @@ public class CoordenadorController {
 					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro ao alterar professorCPF"));
 		}
 	}
+	
+	@GetMapping("/turmas")
+	public ResponseEntity listarTurmas() {
+		try {
+			return ResponseEntity.ok().body(turmaService.listarTurmasCoordenador());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest()
+					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro ao listar turmas"));
+		}
+	}
 
 	@PostMapping("/cadastrar-turma")
 	public ResponseEntity cadastrarTurma(@RequestBody TurmaDTO turmaDTO) {
@@ -162,7 +167,18 @@ public class CoordenadorController {
 			return ResponseEntity.badRequest()
 					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro ao cadastrar turma"));
 		}
-
 	}
-
+	
+	@DeleteMapping("/deletar-turma/{identificador}")
+	public ResponseEntity deletarTurma(@PathParam(value = "identificador") String identificador) {
+		try {
+			turmaService.deletarTurma(identificador);
+			return ResponseEntity.ok()
+					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Turma removida com sucesso"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest()
+					.body(Collections.singletonMap(RESPONSE_FIELD_NOME, "Erro ao remover turma"));
+		}
+	}
 }

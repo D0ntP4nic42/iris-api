@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.iris_api.dto.ProfessorRegisterDTO;
 import br.com.iris_api.service.ProfessorService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.persistence.EntityNotFoundException;
 
 @RestController
 @RequestMapping("/professores")
@@ -32,11 +33,12 @@ public class ProfessorController {
 		try {
 			var response = professorService.listar().stream().map(professor -> Map.of("nome", professor.getNome(),
 					"role", professor.getRole(), "id", professor.getId())).collect(Collectors.toList());
-			
+
 			return ResponseEntity.ok().body(response);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return ResponseEntity.badRequest().body(Collections.singletonMap(RESPONSE_FIELD_NAME, "Erro ao listar professores"));
+			return ResponseEntity.badRequest()
+					.body(Collections.singletonMap(RESPONSE_FIELD_NAME, "Erro ao listar professores"));
 		}
 	}
 
@@ -52,27 +54,36 @@ public class ProfessorController {
 			return ResponseEntity.ok().body(professor.get());
 		} catch (Exception e) {
 			e.printStackTrace();
-			return ResponseEntity.badRequest().body(Collections.singletonMap(RESPONSE_FIELD_NAME, "Erro ao buscar professorCPF"));
+			return ResponseEntity.badRequest()
+					.body(Collections.singletonMap(RESPONSE_FIELD_NAME, "Erro ao buscar professorCPF"));
 		}
 	}
 
 	@PutMapping("/alterar-conta")
 	public ResponseEntity alterarConta(@RequestBody ProfessorRegisterDTO professorDTO, Principal principal) {
 		try {
-			var professorLogado = professorService.findByUsername(principal.getName());
+			var professorLogado = professorService.findByUsername(principal.getName())
+					.orElseThrow(() -> new EntityNotFoundException("Usuário não possui autorização"));
 
-			if (!professorLogado.get().getCpf().equals(professorDTO.cpf()) && professorLogado.isEmpty()) {
+			if (!professorLogado.getCpf().equals(professorDTO.cpf())) {
 				return ResponseEntity.badRequest()
 						.body(Collections.singletonMap(RESPONSE_FIELD_NAME, "Usuário não possui autorização"));
 			}
 
-			professorService.salvar(professorDTO);
+			var professor = professorService.alterar(professorDTO);
+			
+			if (professor == null) {
+				return ResponseEntity.badRequest()
+						.body(Collections.singletonMap(RESPONSE_FIELD_NAME, "Erro ao alterar professor"));
+			}
 
-			return ResponseEntity.ok().body(Collections.singletonMap(RESPONSE_FIELD_NAME, "Conta alterado com sucesso"));
+			return ResponseEntity.ok()
+					.body(Collections.singletonMap(RESPONSE_FIELD_NAME, "Conta alterado com sucesso"));
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			return ResponseEntity.badRequest().body(Collections.singletonMap(RESPONSE_FIELD_NAME, "Erro ao alterar professorCPF"));
+			return ResponseEntity.badRequest()
+					.body(Collections.singletonMap(RESPONSE_FIELD_NAME, "Erro ao alterar professor"));
 		}
 	}
 
@@ -84,10 +95,12 @@ public class ProfessorController {
 						.body(Collections.singletonMap(RESPONSE_FIELD_NAME, "Professor não encontrado"));
 			}
 			professorService.deletar(principal.getName());
-			return ResponseEntity.ok().body(Collections.singletonMap(RESPONSE_FIELD_NAME, "Conta removida com sucesso"));
+			return ResponseEntity.ok()
+					.body(Collections.singletonMap(RESPONSE_FIELD_NAME, "Conta removida com sucesso"));
 		} catch (Exception e) {
 			e.printStackTrace();
-			return ResponseEntity.badRequest().body(Collections.singletonMap(RESPONSE_FIELD_NAME, "Erro ao remover conta"));
+			return ResponseEntity.badRequest()
+					.body(Collections.singletonMap(RESPONSE_FIELD_NAME, "Erro ao remover conta"));
 		}
 	}
 }

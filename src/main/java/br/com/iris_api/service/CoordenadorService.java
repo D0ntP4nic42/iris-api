@@ -35,7 +35,7 @@ public class CoordenadorService {
 
 			var professorTurma = professor.get();
 
-			var turma = new Turma(turmaDTO.identificador(), professorTurma, turmaDTO.sala(), turmaDTO.disciplina());
+			var turma = new Turma(turmaDTO.identificador(), turmaDTO.sala(), turmaDTO.disciplina(), professorTurma);
 			return turmaRepository.save(turma);
 
 		}

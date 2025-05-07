@@ -3,7 +3,6 @@ package br.com.iris_api.service;
 import java.util.List;
 import java.util.Optional;
 
-import br.com.iris_api.entity.Turma;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,9 +10,10 @@ import org.springframework.stereotype.Service;
 
 import br.com.iris_api.dto.ProfessorRegisterDTO;
 import br.com.iris_api.entity.Professor;
+import br.com.iris_api.entity.Turma;
 import br.com.iris_api.repository.ProfessorRepository;
 import br.com.iris_api.security.Role;
-import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.EntityExistsException;
 
 @Service
 public class ProfessorService {
@@ -31,8 +31,19 @@ public class ProfessorService {
 	}
 
 	public Professor salvar(ProfessorRegisterDTO professorDTO) {
+		if (professorRepository.findByCpf(professorDTO.cpf()).isPresent()) {
+			throw new EntityExistsException("Professor já cadastrado");
+		}
+
+		professorRepository.save(new Professor(false, professorDTO.nome(), professorDTO.cpf(),
+				PASSWORD_ENCODER.encode(professorDTO.senha())));
+		return professorRepository.findByCpf(professorDTO.cpf())
+				.orElseThrow(() -> new EntityExistsException("Erro ao cadastrar professor"));
+	}
+
+	public Professor alterar(ProfessorRegisterDTO professorDTO) {
 		var professor = professorRepository.findByCpf(professorDTO.cpf())
-				.orElseThrow(() -> new EntityNotFoundException("Professor não encontrado"));
+				.orElseThrow(() -> new EntityExistsException("Professor não encontrado"));
 		professor.setNome(professorDTO.nome());
 		professor.setSenha(PASSWORD_ENCODER.encode(professorDTO.senha()));
 		return professorRepository.save(professor);
