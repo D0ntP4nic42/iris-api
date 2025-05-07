@@ -9,6 +9,7 @@ import br.com.iris_api.dto.AlunoDTO;
 import br.com.iris_api.entity.Aluno;
 import br.com.iris_api.repository.AlunoRepository;
 import br.com.iris_api.repository.TurmaRepository;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
@@ -23,7 +24,7 @@ public class AlunoService {
 
 	public void salvarAluno(AlunoDTO alunoDTO) {
 		if (alunoRepository.findByCpf(alunoDTO.cpf()).isPresent()) {
-			throw new IllegalArgumentException("CPF já cadastrado");
+			throw new EntityExistsException("CPF já cadastrado");
 		}
 		var aluno = new Aluno(alunoDTO.nome(), alunoDTO.cpf(), PASSWORD_ENCODER.encode(alunoDTO.senha()),
 				alunoDTO.matricula());

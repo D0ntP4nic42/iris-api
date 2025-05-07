@@ -11,36 +11,41 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.iris_api.dto.AlunoDTO;
 import br.com.iris_api.service.AlunoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.websocket.server.PathParam;
 
 @RestController
 @RequestMapping("/aluno")
 @SecurityRequirement(name = "bearerAuth")
+@Tag(name = "Aluno", description = "Operações chamadas por alunos")
 public class AlunoController {
 	@Autowired
 	private AlunoService alunoService;
 
+	@Operation(summary = "Cadastrar novo aluno", description = "Cria um novo aluno com base nas informações fornecidas no corpo da requisição.")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Aluno cadastrado com sucesso", content = @Content()),
+			@ApiResponse(responseCode = "400", description = "Aluno já existe", content = @Content()),
+			@ApiResponse(responseCode = "500", description = "Erro interno", content = @Content()) })
 	@PostMapping
 	public ResponseEntity<String> cadastrarAluno(@RequestBody AlunoDTO alunoDTO) {
-		try {
-			alunoService.salvarAluno(alunoDTO);
-			return ResponseEntity.ok().body("Aluno cadastrado com sucesso");
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.badRequest().body("Erro ao cadastrar aluno");
-		}
+		alunoService.salvarAluno(alunoDTO);
+		return ResponseEntity.ok().body("Aluno cadastrado com sucesso");
 	}
 
+	@Operation(summary = "Matricular aluno", description = "Matrícula um aluno autenticado em uma turma ou curso com base no identificador fornecido.")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Aluno matriculado com sucesso", content = @Content()),
+			@ApiResponse(responseCode = "404", description = "Entidade não encontrada", content = @Content()),
+			@ApiResponse(responseCode = "500", description = "Erro interno", content = @Content()) })
 	@PostMapping("/matricular")
 	public ResponseEntity<String> matricularAluno(@PathParam(value = "identificador") String identificador,
 			Principal principal) {
-		try {
-			alunoService.matricularAluno(principal.getName(), identificador);
-			return ResponseEntity.ok().body("Aluno matriculado com sucesso");
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.badRequest().body("Erro ao matricular aluno");
-		}
+		alunoService.matricularAluno(principal.getName(), identificador);
+		return ResponseEntity.ok().body("Aluno matriculado com sucesso");
 	}
 }
