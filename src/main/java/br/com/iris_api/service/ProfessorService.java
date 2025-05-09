@@ -52,11 +52,6 @@ public class ProfessorService {
 		return professorRepository.save(professor);
 	}
 
-	public void deletar(String cpf) {
-		var professor = professorRepository.findByCpf(cpf).orElseThrow(() -> new EntityNotFoundException("Professor não encontrado"));
-		professorRepository.delete(professor);
-	}
-
 	public void alterarCoordenador(String cpfNovoCoordenador, String cpfProfessorLogado) {
 		var professor = professorRepository.findByCpf(cpfNovoCoordenador)
 				.orElseThrow(() -> new EntityNotFoundException("Professor não encontrado"));

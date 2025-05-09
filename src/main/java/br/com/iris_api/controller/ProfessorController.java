@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.iris_api.dto.ProfessorRegisterDTO;
 import br.com.iris_api.entity.Professor;
 import br.com.iris_api.service.ProfessorService;
+import br.com.iris_api.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -29,6 +30,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Professor", description = "Operações chamadas por professores")
 public class ProfessorController {
+	
+	@Autowired
+	private UserService userService;
 
 	@Autowired
 	private ProfessorService professorService;
@@ -81,14 +85,15 @@ public class ProfessorController {
 
 	}
 
-	@Operation(summary = "Deletar conta do professor logado", description = "Remove a conta do professor logado")
+	@Operation(summary = "Desabilitar/habilitar conta do professor logado", description = "Desabilita/habilita a conta do professor logado")
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Conta removida com sucesso", content = @Content()),
+			@ApiResponse(responseCode = "200", description = "Conta desabilitada/habilitada com sucesso", content = @Content()),
+			@ApiResponse(responseCode = "400", description = "Não é possível desabilitar um coordenador", content = @Content()),
 			@ApiResponse(responseCode = "404", description = "Professor não encontrado", content = @Content()),
 			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
-	@DeleteMapping("/deletar-conta")
-	public ResponseEntity<String> deletarConta(Principal principal) {
-		professorService.deletar(principal.getName());
-		return ResponseEntity.ok().body("Conta removida com sucesso");
+	@DeleteMapping("/desabilitar-conta")
+	public ResponseEntity<String> desabilitarHabilitarConta(Principal principal) {
+		userService.desabilitarHabilitar(principal.getName());
+		return ResponseEntity.ok().body("Conta desabilitada/habilitada com sucesso");
 	}
 }

@@ -1,7 +1,6 @@
 package br.com.iris_api.controller;
 
 import java.security.Principal;
-import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +21,7 @@ import br.com.iris_api.entity.Turma;
 import br.com.iris_api.service.CoordenadorService;
 import br.com.iris_api.service.ProfessorService;
 import br.com.iris_api.service.TurmaService;
+import br.com.iris_api.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -29,7 +29,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.websocket.server.PathParam;
 
 @RestController
@@ -37,7 +36,9 @@ import jakarta.websocket.server.PathParam;
 @SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Coordenador", description = "Operações chamadas pelo coordenador")
 public class CoordenadorController {
-	private static final String RESPONSE_FIELD_NOME = "mensagem";
+	@Autowired
+	private UserService userService;
+	
 	@Autowired
 	private ProfessorService professorService;
 
@@ -94,23 +95,17 @@ public class CoordenadorController {
 
 	}
 
-	@Operation(summary = "Deletar professor", description = "Remove um professor com base no CPF fornecido")
+	@Operation(summary = "Desabilitar/habilitar usuário", description = "DesaBilita/habilita um usuário com base no CPF fornecido")
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Professor removido com sucesso", content = @Content()),
-			@ApiResponse(responseCode = "400", description = "Erro, não é possível deletar o coordenador", content = @Content()),
-			@ApiResponse(responseCode = "404", description = "Professor não encontrado", content = @Content()),
+			@ApiResponse(responseCode = "200", description = "Usuário desabilitado/habilitado com sucesso", content = @Content()),
+			@ApiResponse(responseCode = "400", description = "Não é possível desabilitar um coordenador", content = @Content()),
+			@ApiResponse(responseCode = "404", description = "Usuário não encontrado", content = @Content()),
 			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
-	@DeleteMapping("/deletar-professor")
-	public ResponseEntity<String> deletarProfessor(@PathParam(value = "cpf") String cpf) {
-		Professor professor = professorService.findByUsername(cpf);
+	@DeleteMapping("/desabilitar-habilitar-usuario")
+	public ResponseEntity<String> desabilitarHabilitarProfessor(@PathParam(value = "cpf") String cpf) {
+		userService.desabilitarHabilitar(cpf);
 
-		if (professor.getRole().equals("COORDENADOR")) {
-			return ResponseEntity.badRequest().body("Erro, não é possível deletar o coordenador");
-		}
-
-		professorService.deletar(cpf);
-
-		return ResponseEntity.ok().body("Professor removido com sucesso");
+		return ResponseEntity.ok().body("Usuário Desabilitado/habilitado com sucesso");
 	}
 
 	@Operation(summary = "Alterar professor", description = "Altera as informações de um professor com base nas informações fornecidas")

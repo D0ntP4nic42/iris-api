@@ -27,7 +27,7 @@ public class Aluno extends User {
 	}
 
 	public Aluno(String nome, String cpf, String senha, String matricula) {
-		super(nome, cpf, senha, Role.ALUNO.name());
+		super(nome, cpf, senha, Role.ALUNO.name(), true);
 		this.matricula = matricula;
 		this.turmas = new ArrayList<>();
 	}

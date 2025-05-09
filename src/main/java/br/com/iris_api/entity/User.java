@@ -33,15 +33,19 @@ public class User {
 	@Column(nullable = false)
     private String role;
 	
+	@Column
+	private boolean enabled;
+	
 	public User() {
 		
 	}
 	
-	public User(String nome, String cpf, String senha, String role) {
+	public User(String nome, String cpf, String senha, String role, boolean enabled) {
 		this.nome = nome;
 		this.cpf = cpf;
 		this.senha = senha;
 		this.role = role;
+		this.enabled = enabled;
 	}
 	
 	// Getters e setters
@@ -83,5 +87,13 @@ public class User {
 	
 	public void setRole(String role) {
 		this.role = role;
+	}
+	
+	public boolean isEnabled() {
+		return this.enabled;
+	}
+	
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 }
