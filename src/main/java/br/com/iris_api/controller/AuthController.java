@@ -51,14 +51,12 @@ public class AuthController {
 			@ApiResponse(responseCode = "500", description = "Erro interno no servidor", content = @Content()) })
 	@PostMapping("/login")
 	public ResponseEntity login(@RequestBody LoginDTO loginDTO) {
-		var user = userService.findByUsername(loginDTO.cpf());
-
-		if (user.isEmpty()) {
+		var user = userService.findByUsername(loginDTO.cpf()).orElseThrow(() -> {
 			throw new EntityNotFoundException("Usuário não encontrado");
-		}
+		});
 
-		if (PASSWORD_ENCODER.matches(loginDTO.senha(), user.get().getSenha())) {
-			return ResponseEntity.ok(Collections.singletonMap("token", gerarAccessToken(user.get())));
+		if (PASSWORD_ENCODER.matches(loginDTO.senha(), user.getSenha()) && user.isEnabled()) {
+			return ResponseEntity.ok(Collections.singletonMap("token", gerarAccessToken(user)));
 		}
 
 		throw new BadCredentialsException("Credenciais inválidas");
