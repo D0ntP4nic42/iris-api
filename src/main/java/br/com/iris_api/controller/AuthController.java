@@ -51,9 +51,7 @@ public class AuthController {
 			@ApiResponse(responseCode = "500", description = "Erro interno no servidor", content = @Content()) })
 	@PostMapping("/login")
 	public ResponseEntity login(@RequestBody LoginDTO loginDTO) {
-		var user = userService.findByUsername(loginDTO.cpf()).orElseThrow(() -> {
-			throw new EntityNotFoundException("Usuário não encontrado");
-		});
+		var user = userService.findByUsername(loginDTO.cpf());
 
 		if (PASSWORD_ENCODER.matches(loginDTO.senha(), user.getSenha()) && user.isEnabled()) {
 			return ResponseEntity.ok(Collections.singletonMap("token", gerarAccessToken(user)));

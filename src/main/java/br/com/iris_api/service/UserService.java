@@ -15,8 +15,8 @@ public class UserService {
 	@Autowired
 	private UserRepository userRepository;
 
-	public Optional<User> findByUsername(String cpf) {
-		return userRepository.findByCpf(cpf);
+	public User findByUsername(String cpf) {
+		return userRepository.findByCpf(cpf).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
 	}
 	
 	public void desabilitarHabilitar(String cpf) {
