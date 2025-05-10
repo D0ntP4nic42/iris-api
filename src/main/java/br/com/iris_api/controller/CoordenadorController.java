@@ -129,7 +129,7 @@ public class CoordenadorController {
 			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
 	@GetMapping("/turmas")
 	public ResponseEntity<List<Turma>> listarTurmas(Principal principal) {
-		return ResponseEntity.ok().body(turmaService.listarTurmas(principal.getName()));
+		return ResponseEntity.ok().body(turmaService.listarTurmas());
 	}
 
 	@Operation(summary = "Cadastrar turma", description = "Cadastra uma nova turma com base nas informações fornecidas")

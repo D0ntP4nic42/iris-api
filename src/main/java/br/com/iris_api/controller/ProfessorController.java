@@ -104,11 +104,11 @@ public class ProfessorController {
 	@Operation(summary = "Listar turmas do professor logado", description = "Retorna as turmas do professor logado")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Turmas listadas com sucesso", content = @Content()),
-			@ApiResponse(responseCode = "404", description = "Usuário não encontrado", content = @Content()),
+			@ApiResponse(responseCode = "404", description = "Professor não encontrado", content = @Content()),
 			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
 	@GetMapping("/listar-turmas")
 	public ResponseEntity<?> listarTurmas(Principal principal) {
-		var turmas = turmaService.listarTurmas(principal.getName());
+		var turmas = turmaService.listarTurmasProfessor(principal.getName());
 		
 		return ResponseEntity.ok().body(turmas);
 	}
