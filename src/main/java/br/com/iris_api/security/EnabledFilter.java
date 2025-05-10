@@ -19,11 +19,13 @@ public class EnabledFilter extends OncePerRequestFilter {
 	@Autowired
 	private UserService userService;
 	
+	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+		
 		var user = userService.findByUsername(authentication.getName());
 		
 		if (!user.isEnabled()) {
@@ -34,5 +36,14 @@ public class EnabledFilter extends OncePerRequestFilter {
 		}
 		
 		filterChain.doFilter(request, response);
+	}
+	
+	@Override
+	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+	    String path = request.getRequestURI();
+
+	    return path.startsWith("/auth") ||
+	           path.startsWith("/swagger") ||
+	           path.startsWith("/v3");
 	}
 }
