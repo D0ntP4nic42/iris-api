@@ -63,19 +63,4 @@ public class ProfessorService {
 		professorLogado.setRole(Role.PROFESSOR.name());
 		professorRepository.save(professorLogado);
 	}
-
-	public void adicionarTurma(Professor professor, Turma turma) {
-		if (professor.getTurmas().contains(turma)) {
-			throw new EntityExistsException("Professor já possui a turma");
-		}
-		
-		professor.addTurma(turma);
-		professorRepository.save(professor);
-	}
-	
-	public List<Turma> listarTurmas(String cpf) {
-		var professor = professorRepository.findByCpf(cpf)
-				.orElseThrow(() -> new EntityNotFoundException("Professor não encontrado"));
-		return professor.getTurmas();
-	}
 }

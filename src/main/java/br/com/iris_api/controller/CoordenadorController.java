@@ -124,10 +124,11 @@ public class CoordenadorController {
 	@Operation(summary = "Listar turmas", description = "Retorna a lista de todas as turmas cadastradas com todas as informações")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Turmas listadas com sucesso", content = @Content()),
+			@ApiResponse(responseCode = "404", description = "Usuário não encontrado", content = @Content()),
 			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
 	@GetMapping("/turmas")
-	public ResponseEntity<List<Turma>> listarTurmas() {
-		return ResponseEntity.ok().body(turmaService.listarTurmasCoordenador());
+	public ResponseEntity<List<Turma>> listarTurmas(Principal principal) {
+		return ResponseEntity.ok().body(turmaService.listarTurmas(principal.getName()));
 	}
 
 	@Operation(summary = "Cadastrar turma", description = "Cadastra uma nova turma com base nas informações fornecidas")

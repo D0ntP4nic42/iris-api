@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.iris_api.dto.ProfessorRegisterDTO;
 import br.com.iris_api.entity.Professor;
 import br.com.iris_api.service.ProfessorService;
+import br.com.iris_api.service.TurmaService;
 import br.com.iris_api.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -36,6 +37,9 @@ public class ProfessorController {
 
 	@Autowired
 	private ProfessorService professorService;
+	
+	@Autowired
+	private TurmaService turmaService;
 
 	@Operation(summary = "Listar professores", description = "Retorna a lista de professores cadastrados com alguns limites de dados")
 	@ApiResponses(value = {
@@ -100,11 +104,11 @@ public class ProfessorController {
 	@Operation(summary = "Listar turmas do professor logado", description = "Retorna as turmas do professor logado")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Turmas listadas com sucesso", content = @Content()),
-			@ApiResponse(responseCode = "404", description = "Professor não encontrado", content = @Content()),
+			@ApiResponse(responseCode = "404", description = "Usuário não encontrado", content = @Content()),
 			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
 	@GetMapping("/listar-turmas")
 	public ResponseEntity<?> listarTurmas(Principal principal) {
-		var turmas = professorService.listarTurmas(principal.getName());
+		var turmas = turmaService.listarTurmas(principal.getName());
 		
 		return ResponseEntity.ok().body(turmas);
 	}
