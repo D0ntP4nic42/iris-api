@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.iris_api.dto.ProfessorRegisterDTO;
 import br.com.iris_api.dto.TurmaDTO;
+import br.com.iris_api.entity.Aluno;
 import br.com.iris_api.entity.Professor;
 import br.com.iris_api.entity.Turma;
 import br.com.iris_api.service.CoordenadorService;
@@ -140,12 +141,10 @@ public class CoordenadorController {
 	@PostMapping("/cadastrar-turma")
 	public ResponseEntity<String> cadastrarTurma(@RequestBody TurmaDTO turmaDTO) {
 		var turma = turmaService.cadastrarTurma(turmaDTO);
-
+		
 		if (turma == null) {
 			return ResponseEntity.badRequest().body("Erro ao cadastrar turma");
 		}
-
-		professorService.adicionarTurma(turma.getProfessor(), turma);
 
 		return ResponseEntity.ok().body("Turma cadastrada com sucesso");
 
@@ -160,5 +159,14 @@ public class CoordenadorController {
 	public ResponseEntity<String> deletarTurma(@PathParam(value = "identificador") String identificador) {
 		turmaService.deletarTurma(identificador);
 		return ResponseEntity.ok().body("Turma removida com sucesso");
+	}
+	
+	@Operation(summary = "Listar alunos", description = "Retorna a lista de alunos cadastrados")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Alunos listados com sucesso", content = @Content()),
+			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
+	@GetMapping("/alunos")
+	public ResponseEntity<?> listarAlunos() {
+		return ResponseEntity.ok().body(coordenadorService.listarAlunos());
 	}
 }
