@@ -1,7 +1,6 @@
 package br.com.iris_api.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -72,5 +71,11 @@ public class ProfessorService {
 		
 		professor.addTurma(turma);
 		professorRepository.save(professor);
+	}
+	
+	public List<Turma> listarTurmas(String cpf) {
+		var professor = professorRepository.findByCpf(cpf)
+				.orElseThrow(() -> new EntityNotFoundException("Professor não encontrado"));
+		return professor.getTurmas();
 	}
 }
