@@ -36,9 +36,7 @@ public class AlunoService {
 				.orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
 		var turma = turmaRepository.findByIdentificador(identificador)
 				.orElseThrow(() -> new EntityNotFoundException("Turma não encontrada"));
-		aluno.getTurmas().add(turma);
 		turma.getAlunos().add(aluno);
-		alunoRepository.save(aluno);
 		turmaRepository.save(turma);
 	}
 }
