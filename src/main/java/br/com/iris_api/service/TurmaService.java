@@ -21,15 +21,15 @@ import jakarta.persistence.EntityNotFoundException;
 @Service
 public class TurmaService {
 
-    @Autowired
-    private TurmaRepository turmaRepository;
-    
-    @Autowired
-    private ProfessorRepository professorRepository;
-    
-    @Autowired
-	private UserRepository userRepository;
+	@Autowired
+	private TurmaRepository turmaRepository;
 
+	@Autowired
+	private ProfessorRepository professorRepository;
+	
+	@Autowired
+	private UserRepository userRepository;
+	
 	public List<Turma> listarTurmas(String cpf) {
 		var user = userRepository.findByCpf(cpf)
 				.orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
@@ -40,40 +40,31 @@ public class TurmaService {
 			Aluno aluno = (Aluno) user;
 			return aluno.getTurmas();
 		} else {
-        return turmaRepository.findAll();
-    }
-    
+			return turmaRepository.findAll();
+		}
+		
 	}
 
 	public Optional<Turma> findByIdentificador(String identificador) {
-        return turmaRepository.findByIdentificador(identificador);
-    }
-    
-    public Turma cadastrarTurma(TurmaDTO turmaDTO) {
+		return turmaRepository.findByIdentificador(identificador);
+	}
+
+	public Turma cadastrarTurma(TurmaDTO turmaDTO) {
 
 		var professor = professorRepository.findByCpf(turmaDTO.professorCPF())
 				.orElseThrow(() -> new EntityNotFoundException("Professor não encontrado"));
 
 		var turma = new Turma(turmaDTO.identificador(), turmaDTO.sala(), turmaDTO.disciplina(), professor);
-			return turmaRepository.save(turma);
-
-		}
+		return turmaRepository.save(turma);
 
 	}
-
-    public void deletarTurma(String identificador){
-        var turma = turmaRepository.findByIdentificador(identificador).orElseThrow(() -> new EntityNotFoundException("Turma não encontrada"));
-//        for (Aluno aluno : turma.getAlunos()) {
-//			aluno.getTurmas().remove(turma);
-//			alunoRepository.save(aluno);
-//		}
-        var professor = turma.getProfessor();
-        if (professor != null) {
-			professor.getTurmas().remove(turma);
-		}
-        
-        turma.getAlunos().clear();
-        
-        turmaRepository.delete(turma);
-    }
+	
+	public void deletarTurma(String identificador) {
+		var turma = turmaRepository.findByIdentificador(identificador)
+				.orElseThrow(() -> new EntityNotFoundException("Turma não encontrada"));
+		
+		turma.getProfessor().getTurmas().remove(turma);
+		
+		turmaRepository.delete(turma);
+	}
 }

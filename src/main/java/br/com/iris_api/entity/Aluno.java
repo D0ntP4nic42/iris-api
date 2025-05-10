@@ -8,9 +8,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import br.com.iris_api.security.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -20,6 +18,7 @@ public class Aluno extends User {
 	private String matricula;
 	
 	@ManyToMany(mappedBy = "alunos")
+	@JsonBackReference
 	private List<Turma> turmas;
 	
 	public Aluno() {
