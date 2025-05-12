@@ -61,7 +61,7 @@ public class ProfessorController {
 			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
 	@GetMapping("/info-conta")
 	public ResponseEntity<Professor> infoConta(Principal principal) {
-		var professor = professorService.findByUsername(principal.getName());
+		var professor = professorService.findByCpf(principal.getName());
 
 		return ResponseEntity.ok().body(professor);
 	}
@@ -73,7 +73,7 @@ public class ProfessorController {
 			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
 	@PutMapping("/alterar-conta")
 	public ResponseEntity<String> alterarConta(@RequestBody ProfessorRegisterDTO professorDTO, Principal principal) {
-		var professorLogado = professorService.findByUsername(principal.getName());
+		var professorLogado = professorService.findByCpf(principal.getName());
 
 		if (!professorLogado.getCpf().equals(professorDTO.cpf())) {
 			throw new BadCredentialsException("Você não pode alterar informações de outro professor");

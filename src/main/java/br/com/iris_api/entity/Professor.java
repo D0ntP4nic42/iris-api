@@ -6,13 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import br.com.iris_api.security.Role;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "professores")
@@ -22,11 +16,16 @@ public class Professor extends User {
 	@JsonBackReference
 	private List<Turma> turmas;
 
+	@OneToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "trilha_id")
+	private Trilha trilha;
+
 	public Professor() {}
 	
 	public Professor(boolean isCoordenador, String nome, String cpf, String senha) {
 		super(nome, cpf, senha, isCoordenador ? Role.COORDENADOR.name() : Role.PROFESSOR.name(), true); //expressão ternária, caso isCoordenador seja true, o role será "COORDENADOR", senão, será "PROFESSOR"
 		this.turmas = new ArrayList<>();
+		this.trilha = null;
 	}
 	
 	public void addTurma(Turma turma) {

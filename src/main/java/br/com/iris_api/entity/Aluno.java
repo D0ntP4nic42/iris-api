@@ -6,10 +6,8 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import br.com.iris_api.security.Role;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 
 @Entity
 @Table(name = "alunos")
@@ -20,6 +18,10 @@ public class Aluno extends User {
 	@ManyToMany(mappedBy = "alunos")
 	@JsonBackReference
 	private List<Turma> turmas;
+
+	@ManyToOne
+	@JsonBackReference
+	private Trilha trilha;
 	
 	public Aluno() {
 		super();
@@ -29,6 +31,7 @@ public class Aluno extends User {
 		super(nome, cpf, senha, Role.ALUNO.name(), true);
 		this.matricula = matricula;
 		this.turmas = new ArrayList<>();
+		this.trilha = null;
 	}
 
 	public void addTurma(Turma turma) {
@@ -50,6 +53,10 @@ public class Aluno extends User {
 
 	public void setMatricula(String matricula) {
 		this.matricula = matricula;
+	}
+
+	public void setTrilha(Trilha trilha) {
+		this.trilha = trilha;
 	}
 
 	public List<Turma> getTurmas() {

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import br.com.iris_api.dto.ProfessorRegisterDTO;
 import br.com.iris_api.entity.Professor;
-import br.com.iris_api.entity.Turma;
 import br.com.iris_api.repository.ProfessorRepository;
 import br.com.iris_api.security.Role;
 import jakarta.persistence.EntityExistsException;
@@ -26,7 +25,7 @@ public class ProfessorService {
 		return professorRepository.findAll();
 	}
 
-	public Professor findByUsername(String cpf) {
+	public Professor findByCpf(String cpf) {
 		var professor = professorRepository.findByCpf(cpf)
 				.orElseThrow(() -> new EntityNotFoundException("Professor não encontrado"));
 		return professor;

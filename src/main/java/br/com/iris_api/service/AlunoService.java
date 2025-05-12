@@ -39,4 +39,11 @@ public class AlunoService {
 		turma.getAlunos().add(aluno);
 		turmaRepository.save(turma);
 	}
+
+	public Aluno findByMatricula(String matricula) {
+        return alunoRepository.findByMatricula(matricula)
+                .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
+	}
+
 }
+

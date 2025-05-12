@@ -34,13 +34,13 @@ public class User {
     private String role;
 	
 	@Column
-	private boolean enabled;
+	private Boolean enabled;
 	
 	public User() {
 		
 	}
 	
-	public User(String nome, String cpf, String senha, String role, boolean enabled) {
+	public User(String nome, String cpf, String senha, String role, Boolean enabled) {
 		this.nome = nome;
 		this.cpf = cpf;
 		this.senha = senha;
@@ -89,11 +89,11 @@ public class User {
 		this.role = role;
 	}
 	
-	public boolean isEnabled() {
+	public Boolean isEnabled() {
 		return this.enabled;
 	}
 	
-	public void setEnabled(boolean enabled) {
+	public void setEnabled(Boolean enabled) {
 		this.enabled = enabled;
 	}
 }

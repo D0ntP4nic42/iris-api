@@ -3,6 +3,8 @@ package br.com.iris_api.controller;
 import java.security.Principal;
 import java.util.List;
 
+import br.com.iris_api.dto.TrilhaDTO;
+import br.com.iris_api.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,13 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.iris_api.dto.ProfessorRegisterDTO;
 import br.com.iris_api.dto.TurmaDTO;
-import br.com.iris_api.entity.Aluno;
 import br.com.iris_api.entity.Professor;
 import br.com.iris_api.entity.Turma;
-import br.com.iris_api.service.CoordenadorService;
-import br.com.iris_api.service.ProfessorService;
-import br.com.iris_api.service.TurmaService;
-import br.com.iris_api.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -49,6 +46,9 @@ public class CoordenadorController {
 	@Autowired
 	private TurmaService turmaService;
 
+	@Autowired
+	private TrilhaService trilhaService;
+
 	@Operation(summary = "Listar professores", description = "Retorna a lista de professores cadastrados")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Professores listados com sucesso", content = @Content()),
@@ -65,7 +65,7 @@ public class CoordenadorController {
 			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
 	@GetMapping("/professores/{cpf}")
 	public ResponseEntity<Professor> infoProfessor(@PathVariable String cpf) {
-		var professor = professorService.findByUsername(cpf);
+		var professor = professorService.findByCpf(cpf);
 
 		return ResponseEntity.ok().body(professor);
 	}
@@ -168,5 +168,16 @@ public class CoordenadorController {
 	@GetMapping("/alunos")
 	public ResponseEntity<?> listarAlunos() {
 		return ResponseEntity.ok().body(coordenadorService.listarAlunos());
+	}
+
+	@Operation(summary = "Cadastrar Trilha", description = "Cadastra uma nova trilha com base nas informações fornecidas")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Trilha cadastrada com sucesso", content = @Content()),
+			@ApiResponse(responseCode = "400", description = "Erro ao cadastrar trilha", content = @Content()),
+			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
+	public ResponseEntity<String> cadastrarTrilha(@RequestBody TrilhaDTO trilhaDTO) {
+
+		trilhaService.cadastrarTrilha(trilhaDTO);
+		return ResponseEntity.ok().body("Trilha cadastrada com sucesso");
 	}
 }

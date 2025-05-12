@@ -10,5 +10,7 @@ import br.com.iris_api.entity.Turma;
 public interface AlunoRepository extends JpaRepository<Aluno, Long> {
 
 	Optional<Aluno> findByCpf(String cpf);
+
+	Optional<Aluno> findByMatricula(String matricula);
 	
 }
