@@ -55,9 +55,9 @@ public class Aluno extends User {
 		this.matricula = matricula;
 	}
 
-	public void setTrilha(Trilha trilha) {
-		this.trilha = trilha;
-	}
+	public void setTrilha(Trilha trilha) { this.trilha = trilha; }
+
+	public Trilha getTrilha() { return trilha; }
 
 	public List<Turma> getTurmas() {
 		return turmas;
