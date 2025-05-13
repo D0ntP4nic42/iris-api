@@ -27,7 +27,7 @@ public class TrilhaService {
         var professor = professorRepository.findByCpf(trilhaDTO.cpfProfessor())
                 .orElseThrow(() -> new EntityNotFoundException("Professor não encontrado"));
 
-        var trilha = new Trilha(trilhaDTO.nome(), trilhaDTO.identificador(), professor);
+        var trilha = new Trilha(trilhaDTO.nome(), trilhaDTO.identificador(), professor, trilhaDTO.vagas());
 
         trilhaRepository.save(trilha);
     }

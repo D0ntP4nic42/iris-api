@@ -9,7 +9,6 @@ import java.util.List;
 @Entity
 @Table(name = "trilhas")
 public class Trilha {
-    private static final int NUM_MAX_ALUNOS = 20;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,20 +26,23 @@ public class Trilha {
     @OneToMany(mappedBy = "trilha", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Aluno> alunos;
 
+    @Column
+    private int vagas;
 
     public Trilha() {}
 
 
-    public Trilha(String nome, String identificador, Professor professor) {
+    public Trilha(String nome, String identificador, Professor professor, int vagas) {
         this.nome = nome;
         this.identificador = identificador;
         this.alunos = new ArrayList<>();
         this.professor = professor;
+        this.vagas = vagas;
     }
 
 
     public void addAluno(Aluno aluno) {
-        if (alunos.size() < NUM_MAX_ALUNOS) {
+        if (alunos.size() < vagas) {
             alunos.add(aluno);
             aluno.setTrilha(this);
         } else {
