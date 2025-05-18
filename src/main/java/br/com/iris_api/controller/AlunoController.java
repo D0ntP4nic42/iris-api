@@ -23,17 +23,17 @@ import jakarta.websocket.server.PathParam;
 
 @RestController
 @RequestMapping("/aluno")
-@SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Aluno", description = "Operações chamadas por alunos")
 public class AlunoController {
 	@Autowired
 	private AlunoService alunoService;
-	
+
 	@Autowired
 	private TurmaService turmaService;
 
 	@Operation(summary = "Cadastrar novo aluno", description = "Cria um novo aluno com base nas informações fornecidas no corpo da requisição.")
-	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Aluno cadastrado com sucesso", content = @Content()),
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Aluno cadastrado com sucesso", content = @Content()),
 			@ApiResponse(responseCode = "400", description = "Aluno já existe", content = @Content()),
 			@ApiResponse(responseCode = "500", description = "Erro interno", content = @Content()) })
 	@PostMapping
@@ -42,8 +42,10 @@ public class AlunoController {
 		return ResponseEntity.ok().body("Aluno cadastrado com sucesso");
 	}
 
-	@Operation(summary = "Matricular aluno", description = "Matrícula um aluno autenticado em uma turma ou curso com base no identificador fornecido.")
-	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Aluno matriculado com sucesso", content = @Content()),
+	@Operation(summary = "Matricular aluno em um turma/trilha/oficina", description = "Matrícula um aluno autenticado em uma turma/trilha/oficina com base no identificador fornecido.")
+	@SecurityRequirement(name = "bearerAuth")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Aluno matriculado com sucesso", content = @Content()),
 			@ApiResponse(responseCode = "404", description = "Entidade não encontrada", content = @Content()),
 			@ApiResponse(responseCode = "500", description = "Erro interno", content = @Content()) })
 	@PostMapping("/matricular")
@@ -52,13 +54,15 @@ public class AlunoController {
 		alunoService.matricularAluno(principal.getName(), identificador);
 		return ResponseEntity.ok().body("Aluno matriculado com sucesso");
 	}
-	
-	@Operation(summary = "Listar turmas do aluno", description = "Lista as turmas em que o aluno está matriculado.")
-	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Turmas listadas com sucesso", content = @Content()),
+
+	@Operation(summary = "Listar disciplinas do aluno", description = "Lista as disciplinas em que o aluno está matriculado.")
+	@SecurityRequirement(name = "bearerAuth")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Disciplinas listadas com sucesso", content = @Content()),
 			@ApiResponse(responseCode = "404", description = "Entidade não encontrada", content = @Content()),
 			@ApiResponse(responseCode = "500", description = "Erro interno", content = @Content()) })
 	@GetMapping("/turmas")
-	public ResponseEntity<?> listarTurmas(Principal principal) {
-		return ResponseEntity.ok().body(turmaService.listarTurmasAluno(principal.getName()));
+	public ResponseEntity<?> listarDisciplinas(Principal principal) {
+		return ResponseEntity.ok().body(turmaService.listarDisciplinasAluno(principal.getName()));
 	}
 }

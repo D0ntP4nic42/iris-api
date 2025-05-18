@@ -108,7 +108,7 @@ public class ProfessorController {
 			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
 	@GetMapping("/listar-turmas")
 	public ResponseEntity<?> listarTurmas(Principal principal) {
-		var turmas = turmaService.listarTurmasProfessor(principal.getName());
+		var turmas = turmaService.listarDisciplinasProfessor(principal.getName());
 		
 		return ResponseEntity.ok().body(turmas);
 	}

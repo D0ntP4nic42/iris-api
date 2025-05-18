@@ -4,6 +4,7 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 
@@ -26,41 +28,44 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 
+import br.com.iris_api.service.UserService;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+	@Autowired
+	private UserService userService;
+	
 	@Value("${jwt.public.key}")
 	private RSAPublicKey publicKey;
 
 	@Value("${jwt.private.key}")
 	private RSAPrivateKey privateKey;
-	
+
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http
-				.authorizeHttpRequests(authorizeRequests -> authorizeRequests
-						.requestMatchers(HttpMethod.POST, "/auth/*").permitAll()
-						.requestMatchers(HttpMethod.POST, "/aluno").permitAll()
-						.requestMatchers("/aluno/*").hasAnyRole(Role.ALUNO.name())
-						.requestMatchers("/professores/**").hasAnyRole(Role.COORDENADOR.name(), Role.PROFESSOR.name())
-						.requestMatchers("/coordenador/**").hasAnyRole(Role.COORDENADOR.name())
-						.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-						.anyRequest().authenticated()
-				)
-				.csrf(csrf -> csrf.disable())
-				.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
+		http.authorizeHttpRequests(authorizeRequests -> authorizeRequests
+				.requestMatchers(HttpMethod.POST, "/auth/*").permitAll()
+				.requestMatchers(HttpMethod.POST, "/aluno").permitAll()
+				.requestMatchers("/aluno/**").hasAnyRole(Role.ALUNO.name())
+				.requestMatchers("/professores/**").hasAnyRole(Role.COORDENADOR.name(), Role.PROFESSOR.name())
+				.requestMatchers("/coordenador/**").hasAnyRole(Role.COORDENADOR.name())
+				.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll().anyRequest()
+				.authenticated()).csrf(csrf -> csrf.disable())
+				.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer
+						.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
+				.addFilterAfter(new EnabledFilter(userService), BearerTokenAuthenticationFilter.class)
 				.cors(cors -> cors.configurationSource(request -> {
 					var corsConfiguration = new CorsConfiguration();
 					corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173"));
 					corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 					corsConfiguration.setAllowedHeaders(List.of("*"));
 					return corsConfiguration;
-				}))
-				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+				})).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 		return http.build();
 	}
-	
+
 	@Bean
 	public JwtDecoder jwtDecoder() {
 		return NimbusJwtDecoder.withPublicKey(publicKey).build();
@@ -77,14 +82,14 @@ public class SecurityConfig {
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	
+
 	@Bean
 	public JwtAuthenticationConverter jwtAuthenticationConverter() {
-	    JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
-	    converter.setJwtGrantedAuthoritiesConverter(jwt -> {
-	        String role = jwt.getClaimAsString("role");
-	        return List.of(new SimpleGrantedAuthority("ROLE_" + role));
-	    });
-	    return converter;
+		JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+		converter.setJwtGrantedAuthoritiesConverter(jwt -> {
+			String role = jwt.getClaimAsString("role");
+			return List.of(new SimpleGrantedAuthority("ROLE_" + role));
+		});
+		return converter;
 	}
 }

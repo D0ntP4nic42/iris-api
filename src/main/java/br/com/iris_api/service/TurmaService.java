@@ -27,22 +27,27 @@ public class TurmaService {
 
 	@Autowired
 	private AlunoRepository alunoRepository;
+	
+	@Autowired
+	private DisciplinaService disciplinaService;
 
-	public List<Turma> listarTurmasProfessor(String cpf) {
-		Professor professor = professorRepository.findByCpf(cpf)
-				.orElseThrow(() -> new EntityNotFoundException("Professor não encontrado"));
-		return professor.getTurmas();
+	public List<TurmaFilter> listarDisciplinasProfessor(String cpf) {
+	    Professor professor = professorRepository.findByCpf(cpf)
+	        .orElseThrow(() -> new EntityNotFoundException("Professor não encontrado"));
+
+	    List<Turma> turmas = turmaRepository.findTurmasByProfessorId(professor.getId());
+
+	    return turmas.stream()
+	        .map(turma -> TurmaFilter.fromEntity(turma, professor))
+	        .toList();
 	}
 
-	public List<TurmaFilter> listarTurmasAluno(String cpf) {
+	public TurmaFilter listarDisciplinasAluno(String cpf) {
 		Aluno aluno = alunoRepository.findByCpf(cpf)
 				.orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
-		List<TurmaFilter> turmas = aluno.getTurmas().stream()
-				.map(turma -> new TurmaFilter(turma.getIdentificador(), turma.getDisciplina(),
-						turma.getProfessor().getNome(), turma.getAlunos().stream().map(Aluno::getNome).toList()))
-				.toList();
-		
-		return turmas;
+		var turmaFilter = TurmaFilter.fromEntity(aluno.getTurma());
+
+		return turmaFilter;
 	}
 
 	public List<Turma> listarTurmas() {
@@ -54,11 +59,7 @@ public class TurmaService {
 	}
 
 	public Turma cadastrarTurma(TurmaDTO turmaDTO) {
-
-		var professor = professorRepository.findByCpf(turmaDTO.professorCPF())
-				.orElseThrow(() -> new EntityNotFoundException("Professor não encontrado"));
-
-		var turma = new Turma(turmaDTO.identificador(), turmaDTO.sala(), turmaDTO.disciplina(), professor);
+		var turma = new Turma(turmaDTO.identificador(), turmaDTO.sala(), turmaDTO.temporadaLetiva());
 		return turmaRepository.save(turma);
 
 	}
@@ -66,9 +67,35 @@ public class TurmaService {
 	public void deletarTurma(String identificador) {
 		var turma = turmaRepository.findByIdentificador(identificador)
 				.orElseThrow(() -> new EntityNotFoundException("Turma não encontrada"));
-
-		turma.getProfessor().getTurmas().remove(turma);
-
+		for (Aluno aluno : turma.getAlunos()) {
+			aluno.setTurma(null);
+		}
 		turmaRepository.delete(turma);
+	}
+
+	public void atualizarTurma(TurmaDTO turmaDTO) {
+		var turma = turmaRepository.findByIdentificador(turmaDTO.identificador())
+				.orElseThrow(() -> new EntityNotFoundException("Turma não encontrada"));
+
+		turma.setSala(turmaDTO.sala());
+		turma.setTemporadaLetiva(turmaDTO.temporadaLetiva());
+
+		turma = turmaRepository.save(turma);
+
+		if (turma == null) {
+			throw new RuntimeException("Um erro desconhecido ocorreu ao atualizar a turma");
+		}
+	}
+	
+	public void adicionarDisciplinas(String identificador, List<String> nomesDsiciplinas) {
+		var turma = turmaRepository.findByIdentificador(identificador)
+				.orElseThrow(() -> new EntityNotFoundException("Turma não encontrada"));
+
+		for (String nomeDisciplina : nomesDsiciplinas) {
+			var disciplina = disciplinaService.buscarDisciplinaPorNome(nomeDisciplina);
+			turma.addDisciplina(disciplina);
+		}
+
+		turmaRepository.save(turma);
 	}
 }

@@ -3,12 +3,23 @@ package br.com.iris_api.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "turmas")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Turma {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,30 +31,28 @@ public class Turma {
 	@Column
 	private String sala;
 
-	@Column
-	private String disciplina;
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "turma_id")
+	private List<Disciplina> disciplinas;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "professor_id")
-	@JsonManagedReference
-	private Professor professor;
+	@OneToMany(mappedBy = "turma", cascade = { CascadeType.PERSIST,
+			CascadeType.MERGE }, orphanRemoval = false, fetch = FetchType.LAZY)
+	private List<Aluno> alunos;
 
-	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
-	@JoinTable(name = "turma_aluno", joinColumns = @JoinColumn(name = "turma_id"), inverseJoinColumns = @JoinColumn(name = "aluno_id"))
-	@JsonManagedReference
-	List<Aluno> alunos;
-	
+	@Column(nullable = false)
+	private String temporadaLetiva;
+
 	public Turma() {
 		super();
 	}
-	
-	public Turma(String identificador, String sala, String disciplina, Professor professor) {
+
+	public Turma(String identificador, String sala, String temporadaLetiva) {
 		super();
 		this.identificador = identificador;
 		this.sala = sala;
-		this.disciplina = disciplina;
-		this.professor = professor;
+		this.disciplinas = new ArrayList<Disciplina>();
 		this.alunos = new ArrayList<Aluno>();
+		this.temporadaLetiva = temporadaLetiva;
 	}
 
 	// Getters e setters
@@ -71,27 +80,31 @@ public class Turma {
 		this.sala = sala;
 	}
 
-	public String getDisciplina() {
-		return disciplina;
-	}
-
-	public void setDisciplina(String disciplina) {
-		this.disciplina = disciplina;
-	}
-
-	public Professor getProfessor() {
-		return professor;
-	}
-
-	public void setProfessor(Professor professor) {
-		this.professor = professor;
-	}
-
 	public List<Aluno> getAlunos() {
 		return alunos;
 	}
 
 	public void setAlunos(List<Aluno> alunos) {
 		this.alunos = alunos;
+	}
+
+	public void addDisciplina(Disciplina disciplina) {
+		this.disciplinas.add(disciplina);
+	}
+
+	public List<Disciplina> getDisciplinas() {
+		return disciplinas;
+	}
+
+	public void setDisciplinas(List<Disciplina> disciplinas) {
+		this.disciplinas = disciplinas;
+	}
+
+	public String getTemporadaLetiva() {
+		return temporadaLetiva;
+	}
+
+	public void setTemporadaLetiva(String temporadaLetiva) {
+		this.temporadaLetiva = temporadaLetiva;
 	}
 }

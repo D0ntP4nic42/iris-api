@@ -1,28 +1,33 @@
 package br.com.iris_api.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import br.com.iris_api.security.Role;
-import jakarta.persistence.*;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "alunos")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Aluno extends User {
 	@Column(nullable = false, unique = true)
 	private String matricula;
-	
-	@ManyToMany(mappedBy = "alunos")
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "turma_id")
 	@JsonBackReference
-	private List<Turma> turmas;
+	private Turma turma;
 
 	@ManyToOne
 	@JsonBackReference
 	private Trilha trilha;
-	
+
 	public Aluno() {
 		super();
 	}
@@ -30,23 +35,10 @@ public class Aluno extends User {
 	public Aluno(String nome, String cpf, String senha, String matricula) {
 		super(nome, cpf, senha, Role.ALUNO.name(), true);
 		this.matricula = matricula;
-		this.turmas = new ArrayList<>();
 		this.trilha = null;
 	}
 
-	public void addTurma(Turma turma) {
-		this.turmas.add(turma);
-	}
-	
-	public void removeTurma(Turma turma) {
-		this.turmas.remove(turma);
-	}
-	
-	public void clearTurmas() {
-		this.turmas.clear();
-	}
-	
-	//getter e setter
+	// getter e setter
 	public String getMatricula() {
 		return matricula;
 	}
@@ -55,11 +47,20 @@ public class Aluno extends User {
 		this.matricula = matricula;
 	}
 
-	public void setTrilha(Trilha trilha) { this.trilha = trilha; }
-
-	public Trilha getTrilha() { return trilha; }
-
-	public List<Turma> getTurmas() {
-		return turmas;
+	public void setTrilha(Trilha trilha) {
+		this.trilha = trilha;
 	}
+
+	public Trilha getTrilha() {
+		return trilha;
+	}
+
+	public Turma getTurma() {
+		return turma;
+	}
+
+	public void setTurma(Turma turma) {
+		this.turma = turma;
+	}
+
 }

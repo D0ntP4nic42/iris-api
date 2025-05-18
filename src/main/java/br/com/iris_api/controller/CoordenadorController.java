@@ -3,8 +3,6 @@ package br.com.iris_api.controller;
 import java.security.Principal;
 import java.util.List;
 
-import br.com.iris_api.dto.TrilhaDTO;
-import br.com.iris_api.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,10 +14,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.iris_api.dto.DisciplinaDTO;
 import br.com.iris_api.dto.ProfessorRegisterDTO;
+import br.com.iris_api.dto.TrilhaDTO;
 import br.com.iris_api.dto.TurmaDTO;
+import br.com.iris_api.entity.Disciplina;
 import br.com.iris_api.entity.Professor;
 import br.com.iris_api.entity.Turma;
+import br.com.iris_api.service.CoordenadorService;
+import br.com.iris_api.service.DisciplinaService;
+import br.com.iris_api.service.ProfessorService;
+import br.com.iris_api.service.TrilhaService;
+import br.com.iris_api.service.TurmaService;
+import br.com.iris_api.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -48,6 +55,9 @@ public class CoordenadorController {
 
 	@Autowired
 	private TrilhaService trilhaService;
+	
+	@Autowired
+	private DisciplinaService disciplinaService;
 
 	@Operation(summary = "Listar professores", description = "Retorna a lista de professores cadastrados")
 	@ApiResponses(value = {
@@ -188,7 +198,6 @@ public class CoordenadorController {
 			@ApiResponse(responseCode = "400", description = "Erro ao adicionar aluno a trilha", content = @Content()),
 			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
 	@PostMapping("/adicionar-aluno-trilha")
-
 	public ResponseEntity<String> adicionarAlunoTrilha(@PathParam(value = "matricula") String matricula,
 			@PathParam(value = "identificador") String identificador) {
 
@@ -196,5 +205,55 @@ public class CoordenadorController {
 
 
 		return ResponseEntity.ok().body("Aluno adicionado a trilha com sucesso");
+	}
+	
+	@Operation(summary = "Atualizar turma", description = "Atualiza uma turma com base no identificador fornecido")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Turma atualizada com sucesso", content = @Content()),
+			@ApiResponse(responseCode = "404", description = "Turma não encontrada", content = @Content()),
+			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu ao atualizar turma", content = @Content()) })
+	@PutMapping("/atualizar-turma")
+	public ResponseEntity<String> atualizarTurma(@RequestBody TurmaDTO turmaDTO) {
+		turmaService.atualizarTurma(turmaDTO);
+		return ResponseEntity.ok().body("Turma atualizada com sucesso");
+	}
+	
+	@Operation(summary = "Adicionar disciplina", description = "Adiciona uma disciplina com base nas informações fornecidas")
+	@PostMapping("/adicionar-disciplina")
+	public ResponseEntity<String> adicionarDisciplina(@RequestBody DisciplinaDTO disciplinaDTO) {
+		disciplinaService.salvarDisciplina(disciplinaDTO);
+		return ResponseEntity.ok().body("Disciplina adicionada com sucesso");
+	}
+	
+	@Operation(summary = "Listar disciplinas", description = "Retorna a lista de disciplinas cadastradas")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Disciplinas listadas com sucesso", content = @Content()),
+			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
+	@GetMapping("/disciplinas")
+	public ResponseEntity<?> listarDisciplinas() {
+		return ResponseEntity.ok().body(disciplinaService.listarDisciplinas());
+	}
+	
+	@Operation(summary = "Remover disciplina", description = "Remove uma disciplina com base no nome fornecido")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Disciplina removida com sucesso", content = @Content()),
+			@ApiResponse(responseCode = "404", description = "Disciplina não encontrada", content = @Content()),
+			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
+	@DeleteMapping("/remover-disciplina")
+	public ResponseEntity<String> removerDisciplina(@PathParam(value = "nome") String nome) {
+		disciplinaService.deletarDisciplina(nome);
+		return ResponseEntity.ok().body("Disciplina removida com sucesso");
+	}
+	
+	@Operation(summary = "Adicionar lista de disciplinas a turma", description = "Adiciona uma lista de disciplinas a uma turma com base no nome da disciplina e nos nomes das disciplinas fornecidas")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Disciplinas adicionadas a turma com sucesso", content = @Content()),
+			@ApiResponse(responseCode = "404", description = "Disciplina não encontrada", content = @Content()),
+			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
+	@PostMapping("/adicionar-disciplina-turma")
+	public ResponseEntity<String> adicionarDisciplinaTurma(@PathParam(value = "identificador") String identificador,
+			@RequestBody List<String> nomeDisciplinas) {
+		turmaService.adicionarDisciplinas(identificador, nomeDisciplinas);
+		return ResponseEntity.ok().body("Disciplinas adicionadas a turma com sucesso");
 	}
 }

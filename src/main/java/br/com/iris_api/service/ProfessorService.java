@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.com.iris_api.dto.ProfessorRegisterDTO;
+import br.com.iris_api.entity.Disciplina;
 import br.com.iris_api.entity.Professor;
 import br.com.iris_api.repository.ProfessorRepository;
 import br.com.iris_api.security.Role;
@@ -61,5 +62,10 @@ public class ProfessorService {
 		professorRepository.save(professor);
 		professorLogado.setRole(Role.PROFESSOR.name());
 		professorRepository.save(professorLogado);
+	}
+	
+	public void removerDisciplina(Professor professor, Disciplina disciplina) {
+		professor.removeDisicplina(disciplina);
+		professorRepository.save(professor);
 	}
 }
