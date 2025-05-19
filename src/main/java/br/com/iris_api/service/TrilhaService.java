@@ -42,7 +42,6 @@ public class TrilhaService {
         if (trilha.getAlunos().contains(aluno)) {
             throw new EntityExistsException("Aluno já cadastrado na trilha " + trilha.getNome());
         }
-
         if(aluno.getTrilha() != null){
             throw new EntityExistsException("Aluno já cadastrado em outra trilha");
         }

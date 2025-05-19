@@ -27,17 +27,20 @@ public class DisciplinaService {
 	}
 	
 	public void deletarDisciplina(String nome) {
-	    var disciplina = disciplinaRepository.findByNome(nome)
-	        .orElseThrow(() -> new RuntimeException("Disciplina não encontrada"));
+		var disciplina = disciplinaRepository.findByNome(nome)
+				.orElseThrow(() -> new RuntimeException("Disciplina não encontrada"));
 
-	    var professor = disciplina.getProfessor(); // salva antes de perder referência
+		// Remove o relacionamento com o professor
+		var professor = disciplina.getProfessor();
+		if (professor != null) {
+			professor.removeDisicplina(disciplina);
+			disciplina.setProfessor(null);
+			professorRepository.save(professor); // Salva o professor atualizado
+		}
 
-	    // Remove da lista de disciplinas do professor
-	    professor.removeDisicplina(disciplina); // remove disciplina internamente
-	    professorRepository.save(professor);    // atualiza relação
+		// Agora deleta a disciplina
+		disciplinaRepository.delete(disciplina);
 
-	    // Agora pode deletar a disciplina sem setar o professor como null
-	    disciplinaRepository.delete(disciplina);
 	}
 	
 	public Disciplina buscarDisciplinaPorNome(String nome) {
