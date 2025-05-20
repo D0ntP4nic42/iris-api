@@ -83,7 +83,7 @@ public class CoordenadorController {
 	@Operation(summary = "Registrar professor", description = "Cadastra um novo professor com base nas informações fornecidas")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Professor cadastrado com sucesso", content = @Content()),
-			@ApiResponse(responseCode = "400", description = "Professor já cadastrado", content = @Content()),
+			@ApiResponse(responseCode = "400", description = "CPF já cadastrado", content = @Content()),
 			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
 	@PostMapping("/registrar-professor")
 	public ResponseEntity<String> registrarProfessor(@RequestBody ProfessorRegisterDTO professorDTO) {

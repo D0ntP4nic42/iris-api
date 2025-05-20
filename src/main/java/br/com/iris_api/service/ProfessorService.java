@@ -11,12 +11,16 @@ import br.com.iris_api.dto.ProfessorRegisterDTO;
 import br.com.iris_api.entity.Disciplina;
 import br.com.iris_api.entity.Professor;
 import br.com.iris_api.repository.ProfessorRepository;
+import br.com.iris_api.repository.UserRepository;
 import br.com.iris_api.security.Role;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class ProfessorService {
+	@Autowired
+	private UserRepository userRepository;
+	
 	@Autowired
 	private ProfessorRepository professorRepository;
 
@@ -33,8 +37,8 @@ public class ProfessorService {
 	}
 
 	public Professor salvar(ProfessorRegisterDTO professorDTO) {
-		if (professorRepository.findByCpf(professorDTO.cpf()).isPresent()) {
-			throw new EntityExistsException("Professor já cadastrado");
+		if (userRepository.findByCpf(professorDTO.cpf()).isPresent()) {
+			throw new EntityExistsException("CPF já cadastrado");
 		}
 
 		professorRepository.save(new Professor(false, professorDTO.nome(), professorDTO.cpf(),

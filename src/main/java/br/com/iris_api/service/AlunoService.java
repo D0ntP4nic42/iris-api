@@ -9,12 +9,16 @@ import br.com.iris_api.dto.AlunoDTO;
 import br.com.iris_api.entity.Aluno;
 import br.com.iris_api.repository.AlunoRepository;
 import br.com.iris_api.repository.TurmaRepository;
+import br.com.iris_api.repository.UserRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class AlunoService {
 	public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
+	
+	@Autowired
+	private UserRepository userRepository;
 
 	@Autowired
 	private AlunoRepository alunoRepository;
@@ -23,7 +27,7 @@ public class AlunoService {
 	private TurmaRepository turmaRepository;
 
 	public void salvarAluno(AlunoDTO alunoDTO) {
-		if (alunoRepository.findByCpf(alunoDTO.cpf()).isPresent()) {
+		if (userRepository.findByCpf(alunoDTO.cpf()).isPresent()) {
 			throw new EntityExistsException("CPF já cadastrado");
 		}
 		var aluno = new Aluno(alunoDTO.nome(), alunoDTO.cpf(), PASSWORD_ENCODER.encode(alunoDTO.senha()));
