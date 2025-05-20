@@ -15,9 +15,6 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "alunos")
 public class Aluno extends User {
-	@Column(name = "sala")
-	private String sala;
-	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "turma_id")
 	@JsonBackReference
@@ -31,21 +28,12 @@ public class Aluno extends User {
 		super();
 	}
 
-	public Aluno(String nome, String cpf, String senha, String sala) {
+	public Aluno(String nome, String cpf, String senha) {
 		super(nome, cpf, senha, Role.ALUNO.name(), true);
-		this.sala = sala;
 		this.trilha = null;
 	}
 
 	// getter e setter
-	public String getSala() {
-		return sala;
-	}
-
-	public void setsala(String sala) {
-		this.sala = sala;
-	}
-
 	public void setTrilha(Trilha trilha) {
 		this.trilha = trilha;
 	}
