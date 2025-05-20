@@ -14,7 +14,6 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "alunos")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Aluno extends User {
 	@Column(nullable = false, unique = true)
 	private String matricula;

@@ -1,12 +1,16 @@
 package br.com.iris_api.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.iris_api.dto.TurmaDTO;
+import br.com.iris_api.dto.TurmaResponseDTO;
 import br.com.iris_api.entity.Aluno;
 import br.com.iris_api.entity.Professor;
 import br.com.iris_api.entity.Turma;
@@ -50,8 +54,22 @@ public class TurmaService {
 		return turmaFilter;
 	}
 
-	public List<Turma> listarTurmas() {
-		return turmaRepository.findAll();
+	public List<TurmaResponseDTO> listarTurmas() {
+		var turmaResponse = new ArrayList<TurmaResponseDTO>();
+		
+		var turmas = turmaRepository.findAll();
+		
+		for (var turma: turmas) {
+			Map<String, String> disciplinas = new HashMap<String, String>();
+			
+			for (var disciplina: turma.getDisciplinas()) {
+				disciplinas.put(disciplina.getNome(), disciplina.getProfessor().getNome());
+			}
+			
+			turmaResponse.add(new TurmaResponseDTO(turma.getId(), turma.getIdentificador(), turma.getSala(), disciplinas, turma.getAlunos(), turma.getTemporadaLetiva()));
+		}
+		
+		return turmaResponse;
 	}
 
 	public Optional<Turma> findByIdentificador(String identificador) {

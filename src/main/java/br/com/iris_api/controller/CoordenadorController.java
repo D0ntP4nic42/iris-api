@@ -18,9 +18,8 @@ import br.com.iris_api.dto.DisciplinaDTO;
 import br.com.iris_api.dto.ProfessorRegisterDTO;
 import br.com.iris_api.dto.TrilhaDTO;
 import br.com.iris_api.dto.TurmaDTO;
-import br.com.iris_api.entity.Disciplina;
+import br.com.iris_api.dto.TurmaResponseDTO;
 import br.com.iris_api.entity.Professor;
-import br.com.iris_api.entity.Turma;
 import br.com.iris_api.service.CoordenadorService;
 import br.com.iris_api.service.DisciplinaService;
 import br.com.iris_api.service.ProfessorService;
@@ -138,7 +137,7 @@ public class CoordenadorController {
 			@ApiResponse(responseCode = "404", description = "Usuário não encontrado", content = @Content()),
 			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
 	@GetMapping("/turmas")
-	public ResponseEntity<List<Turma>> listarTurmas(Principal principal) {
+	public ResponseEntity<List<TurmaResponseDTO>> listarTurmas(Principal principal) {
 		return ResponseEntity.ok().body(turmaService.listarTurmas());
 	}
 

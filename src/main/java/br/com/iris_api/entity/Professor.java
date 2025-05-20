@@ -3,8 +3,7 @@ package br.com.iris_api.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import br.com.iris_api.security.Role;
 import jakarta.persistence.CascadeType;
@@ -17,10 +16,10 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "professores")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Professor extends User {
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "professor_id")
+	@JsonBackReference
 	private List<Disciplina> disciplinas;
 	
 	@OneToOne(fetch = FetchType.EAGER)
