@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.iris_api.dto.AlunoDTO;
 import br.com.iris_api.dto.DisciplinaDTO;
 import br.com.iris_api.dto.ProfessorRegisterDTO;
 import br.com.iris_api.dto.TrilhaDTO;
@@ -239,5 +240,16 @@ public class CoordenadorController {
 			@RequestBody List<String> nomeDisciplinas) {
 		turmaService.adicionarDisciplinas(identificador, nomeDisciplinas);
 		return ResponseEntity.ok().body("Disciplinas adicionadas a turma com sucesso");
+	}
+	
+	@Operation(summary = "Alterar aluno", description = "Altera as informações de um aluno com base nas informações fornecidas")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Aluno alterado com sucesso", content = @Content()),
+			@ApiResponse(responseCode = "404", description = "Aluno ou turma não encontrado", content = @Content()),
+			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
+	@PutMapping("/alterar-aluno")
+	public ResponseEntity<String> alterarAluno(@RequestBody AlunoDTO alunoDTO) {
+		coordenadorService.alterarAluno(alunoDTO);
+		return ResponseEntity.ok().body("Aluno alterado com sucesso");
 	}
 }
