@@ -27,7 +27,12 @@ public class AlunoService {
 			throw new EntityExistsException("CPF já cadastrado");
 		}
 		var aluno = new Aluno(alunoDTO.nome(), alunoDTO.cpf(), PASSWORD_ENCODER.encode(alunoDTO.senha()),
-				alunoDTO.matricula());
+				alunoDTO.sala());
+		
+		var turma = turmaRepository.findByIdentificador(alunoDTO.turmaIdentificador())
+				.orElseThrow(() -> new EntityNotFoundException("Turma não encontrada"));
+		
+		aluno.setTurma(turma);
 		alunoRepository.save(aluno);
 	}
 
@@ -40,11 +45,6 @@ public class AlunoService {
 		aluno.setTurma(turma);
 		alunoRepository.save(aluno);
 		turmaRepository.save(turma);
-	}
-
-	public Aluno findByMatricula(String matricula) {
-        return alunoRepository.findByMatricula(matricula)
-                .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
 	}
 
 }

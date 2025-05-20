@@ -116,4 +116,14 @@ public class TurmaService {
 
 		turmaRepository.save(turma);
 	}
+
+	public List<String> listarTurmasDisponiveis() {
+		var turmas = turmaRepository.findAll();
+		List<String> turmasNomes = new ArrayList<>();
+		for (var turma : turmas) {
+			turmasNomes.add(turma.getIdentificador());
+		}
+		
+		return turmasNomes;
+	}
 }

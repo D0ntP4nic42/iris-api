@@ -32,26 +32,6 @@ public class TrilhaService {
         trilhaRepository.save(trilha);
     }
 
-    public void cadastrarAluno(String matricula, String identificador){
-        var aluno = alunoRepository.findByMatricula(matricula)
-                .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
-
-        var trilha = trilhaRepository.findByIdentificador(identificador)
-                .orElseThrow(() -> new EntityNotFoundException("Trilha não encontrada"));
-
-        if (trilha.getAlunos().contains(aluno)) {
-            throw new EntityExistsException("Aluno já cadastrado na trilha " + trilha.getNome());
-        }
-        if(aluno.getTrilha() != null){
-            throw new EntityExistsException("Aluno já cadastrado em outra trilha");
-        }
-
-        aluno.setTrilha(trilha);
-        trilha.addAluno(aluno);
-        alunoRepository.save(aluno);
-        trilhaRepository.save(trilha);
-    }
-
     public Trilha findByIdentificador(String identificador) {
         return trilhaRepository.findByIdentificador(identificador)
                 .orElseThrow(() -> new EntityNotFoundException("Trilha não encontrada"));

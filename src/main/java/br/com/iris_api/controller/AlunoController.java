@@ -35,7 +35,7 @@ public class AlunoController {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Aluno cadastrado com sucesso", content = @Content()),
 			@ApiResponse(responseCode = "400", description = "Aluno já existe", content = @Content()),
-			@ApiResponse(responseCode = "500", description = "Erro interno", content = @Content()) })
+			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
 	@PostMapping
 	public ResponseEntity<String> cadastrarAluno(@RequestBody AlunoDTO alunoDTO) {
 		alunoService.salvarAluno(alunoDTO);
@@ -47,7 +47,7 @@ public class AlunoController {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Aluno matriculado com sucesso", content = @Content()),
 			@ApiResponse(responseCode = "404", description = "Entidade não encontrada", content = @Content()),
-			@ApiResponse(responseCode = "500", description = "Erro interno", content = @Content()) })
+			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
 	@PostMapping("/matricular")
 	public ResponseEntity<String> matricularAluno(@PathParam(value = "identificador") String identificador,
 			Principal principal) {
@@ -60,9 +60,18 @@ public class AlunoController {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Disciplinas listadas com sucesso", content = @Content()),
 			@ApiResponse(responseCode = "404", description = "Entidade não encontrada", content = @Content()),
-			@ApiResponse(responseCode = "500", description = "Erro interno", content = @Content()) })
+			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
 	@GetMapping("/turmas")
 	public ResponseEntity<?> listarDisciplinas(Principal principal) {
 		return ResponseEntity.ok().body(turmaService.listarDisciplinasAluno(principal.getName()));
+	}
+
+	@Operation(summary = "Listar turmas disponíveis", description = "Lista as turmas disponíveis para o aluno.")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Turmas listadas com sucesso", content = @Content()),
+			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
+	@GetMapping("/turmas-disponiveis")
+	public ResponseEntity<?> listarTurmasDisponiveis() {
+		return ResponseEntity.ok().body(turmaService.listarTurmasDisponiveis());
 	}
 }

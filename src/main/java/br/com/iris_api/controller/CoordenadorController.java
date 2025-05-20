@@ -191,21 +191,6 @@ public class CoordenadorController {
 		return ResponseEntity.ok().body("Trilha cadastrada com sucesso");
 	}
 
-	@Operation(summary = "Adiciona um aluno na trilha", description = "Adiciona Aluno a trilha com base na matrícula fornecida")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Aluno adicionado a trilha com sucesso", content = @Content()),
-			@ApiResponse(responseCode = "400", description = "Erro ao adicionar aluno a trilha", content = @Content()),
-			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
-	@PostMapping("/adicionar-aluno-trilha")
-	public ResponseEntity<String> adicionarAlunoTrilha(@PathParam(value = "matricula") String matricula,
-			@PathParam(value = "identificador") String identificador) {
-
-		trilhaService.cadastrarAluno(matricula, identificador);
-
-
-		return ResponseEntity.ok().body("Aluno adicionado a trilha com sucesso");
-	}
-	
 	@Operation(summary = "Atualizar turma", description = "Atualiza uma turma com base no identificador fornecido")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Turma atualizada com sucesso", content = @Content()),

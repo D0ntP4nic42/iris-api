@@ -47,6 +47,7 @@ public class SecurityConfig {
 		http.authorizeHttpRequests(authorizeRequests -> authorizeRequests
 				.requestMatchers(HttpMethod.POST, "/auth/*").permitAll()
 				.requestMatchers(HttpMethod.POST, "/aluno").permitAll()
+				.requestMatchers(HttpMethod.GET, "/aluno/turmas-disponiveis").permitAll()
 				.requestMatchers("/aluno/**").hasAnyRole(Role.ALUNO.name())
 				.requestMatchers("/professores/**").hasAnyRole(Role.COORDENADOR.name(), Role.PROFESSOR.name())
 				.requestMatchers("/coordenador/**").hasAnyRole(Role.COORDENADOR.name())
