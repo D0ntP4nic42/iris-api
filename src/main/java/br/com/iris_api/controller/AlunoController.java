@@ -42,7 +42,7 @@ public class AlunoController {
 		return ResponseEntity.ok().body("Aluno cadastrado com sucesso");
 	}
 
-	@Operation(summary = "Matricular aluno em um turma/trilha/oficina", description = "Matrícula um aluno autenticado em uma turma/trilha/oficina com base no identificador fornecido.")
+	@Operation(summary = "Matricular aluno em um Itinerário", description = "Matrícula um aluno autenticado em um Itinerário com base no identificador fornecido.")
 	@SecurityRequirement(name = "bearerAuth")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Aluno matriculado com sucesso", content = @Content()),
