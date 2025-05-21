@@ -11,6 +11,7 @@ import br.com.iris_api.entity.Professor;
 import br.com.iris_api.repository.AlunoRepository;
 import br.com.iris_api.repository.ProfessorRepository;
 import br.com.iris_api.repository.TurmaRepository;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class CoordenadorService {
@@ -19,10 +20,10 @@ public class CoordenadorService {
 
 	@Autowired
 	private AlunoRepository alunoRepository;
-	
+
 	@Autowired
 	private TurmaRepository turmaRepository;
-	
+
 	public List<Professor> listarProfessores() {
 		return professorRepository.findAll();
 	}
@@ -30,17 +31,19 @@ public class CoordenadorService {
 	public List<Aluno> listarAlunos() {
 		return alunoRepository.findAll();
 	}
-	
+
 	public void alterarAluno(AlunoDTO alunoDTO) {
-		var aluno = alunoRepository.findByCpf(alunoDTO.cpf()).orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
-		var turma = turmaRepository.findByIdentificador(alunoDTO.turmaIdentificador()).orElseThrow(() -> new RuntimeException("Turma não encontrada"));
-		
+		var aluno = alunoRepository.findByCpf(alunoDTO.cpf())
+				.orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
+		var turma = turmaRepository.findByIdentificador(alunoDTO.turmaIdentificador())
+				.orElseThrow(() -> new EntityNotFoundException("Turma não encontrada"));
+
 		if (aluno.getTurma() == null || !turma.getIdentificador().equals(aluno.getTurma().getIdentificador())) {
 			aluno.setTurma(turma);
 		}
-		
+
 		aluno.setNome(alunoDTO.nome());
-		
+
 		alunoRepository.save(aluno);
 	}
 }
