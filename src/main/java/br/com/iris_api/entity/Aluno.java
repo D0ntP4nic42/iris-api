@@ -1,24 +1,34 @@
 package br.com.iris_api.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import br.com.iris_api.security.Role;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "alunos")
+@Table(name = "aluno")
 public class Aluno extends User {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "turma_id")
 	@JsonBackReference
 	private Turma turma;
+	
+	@ManyToMany
+    @JoinTable(
+        name = "aluno_itinerario",
+        joinColumns = @JoinColumn(name = "aluno_id"),
+        inverseJoinColumns = @JoinColumn(name = "itinerario_id")
+    )
+    private List<Itinerario> itinerarios = new ArrayList<>();
 
 	public Aluno() {
 		super();

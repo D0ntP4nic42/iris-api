@@ -7,27 +7,38 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "horarios")
+@Table(name = "horario")
 public class Horario {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    private DayOfWeek diaDaSemana;
+	private DayOfWeek diaDaSemana;
 
-    private LocalTime comeco;
+	private LocalTime comeco;
 
-    private LocalTime fim;
+	private LocalTime fim;
 
-    @ManyToOne
-    private Turma turma;
+	@ManyToOne
+	@JoinColumn(name = "itinerario_id")
+	private Itinerario itinerario;
 
-    // Getters e setters
-    public Long getId() {
+	public Horario() {
+	}
+
+	public Horario(DayOfWeek diaDaSemana, LocalTime comeco, LocalTime fim) {
+		this.diaDaSemana = diaDaSemana;
+		this.comeco = comeco;
+		this.fim = fim;
+	}
+
+	// Getters e setters
+	public Long getId() {
 		return id;
 	}
 
@@ -59,11 +70,12 @@ public class Horario {
 		this.fim = fim;
 	}
 
-	public Turma getTurma() {
-		return turma;
+	public Itinerario getItinerario() {
+		return itinerario;
 	}
 
-	public void setTurma(Turma turma) {
-		this.turma = turma;
+	public void setItinerario(Itinerario itinerario) {
+		this.itinerario = itinerario;
 	}
+
 }

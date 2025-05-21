@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.iris_api.dto.AlunoDTO;
 import br.com.iris_api.dto.DisciplinaDTO;
+import br.com.iris_api.dto.ItinerarioDTO;
 import br.com.iris_api.dto.ProfessorRegisterDTO;
 import br.com.iris_api.dto.TurmaDTO;
 import br.com.iris_api.dto.TurmaResponseDTO;
@@ -236,5 +237,9 @@ public class CoordenadorController {
 		return ResponseEntity.ok().body("Aluno alterado com sucesso");
 	}
 	
-	
+	@PostMapping("/adicionar-itinerario")
+	public ResponseEntity<String> adicionarItinerario(@RequestBody ItinerarioDTO itinerarioDTO) {
+		coordenadorService.adicionarItinerario(itinerarioDTO);
+		return ResponseEntity.ok().body("Itinerário adicionado com sucesso");
+	}
 }
