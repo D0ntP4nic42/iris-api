@@ -30,10 +30,10 @@ public class AlunoService {
 		if (userRepository.findByCpf(alunoDTO.cpf()).isPresent()) {
 			throw new EntityExistsException("CPF já cadastrado");
 		}
-		var aluno = new Aluno(alunoDTO.nome(), alunoDTO.cpf(), PASSWORD_ENCODER.encode(alunoDTO.senha()));
-		
 		var turma = turmaRepository.findByIdentificador(alunoDTO.turmaIdentificador())
 				.orElseThrow(() -> new EntityNotFoundException("Turma não encontrada"));
+		
+		var aluno = new Aluno(alunoDTO.nome(), alunoDTO.cpf(), PASSWORD_ENCODER.encode(alunoDTO.senha()));
 		
 		aluno.setTurma(turma);
 		alunoRepository.save(aluno);
