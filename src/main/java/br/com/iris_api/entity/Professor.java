@@ -22,10 +22,6 @@ public class Professor extends User {
 	@JsonBackReference
 	private List<Disciplina> disciplinas;
 	
-	@OneToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "trilha_id")
-	private Trilha trilha;
-
 	public Professor() {}
 	
 	public Professor(boolean isCoordenador, String nome, String cpf, String senha) {

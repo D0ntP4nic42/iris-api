@@ -20,28 +20,15 @@ public class Aluno extends User {
 	@JsonBackReference
 	private Turma turma;
 
-	@ManyToOne
-	@JsonBackReference
-	private Trilha trilha;
-
 	public Aluno() {
 		super();
 	}
 
 	public Aluno(String nome, String cpf, String senha) {
 		super(nome, cpf, senha, Role.ALUNO.name(), true);
-		this.trilha = null;
 	}
 
 	// getter e setter
-	public void setTrilha(Trilha trilha) {
-		this.trilha = trilha;
-	}
-
-	public Trilha getTrilha() {
-		return trilha;
-	}
-
 	public Turma getTurma() {
 		return turma;
 	}

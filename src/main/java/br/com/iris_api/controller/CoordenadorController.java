@@ -17,14 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.iris_api.dto.AlunoDTO;
 import br.com.iris_api.dto.DisciplinaDTO;
 import br.com.iris_api.dto.ProfessorRegisterDTO;
-import br.com.iris_api.dto.TrilhaDTO;
 import br.com.iris_api.dto.TurmaDTO;
 import br.com.iris_api.dto.TurmaResponseDTO;
 import br.com.iris_api.entity.Professor;
 import br.com.iris_api.service.CoordenadorService;
 import br.com.iris_api.service.DisciplinaService;
 import br.com.iris_api.service.ProfessorService;
-import br.com.iris_api.service.TrilhaService;
 import br.com.iris_api.service.TurmaService;
 import br.com.iris_api.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,9 +51,6 @@ public class CoordenadorController {
 	@Autowired
 	private TurmaService turmaService;
 
-	@Autowired
-	private TrilhaService trilhaService;
-	
 	@Autowired
 	private DisciplinaService disciplinaService;
 
@@ -180,18 +175,6 @@ public class CoordenadorController {
 		return ResponseEntity.ok().body(coordenadorService.listarAlunos());
 	}
 
-	@Operation(summary = "Cadastrar Trilha", description = "Cadastra uma nova trilha com base nas informações fornecidas")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Trilha cadastrada com sucesso", content = @Content()),
-			@ApiResponse(responseCode = "400", description = "Erro ao cadastrar trilha", content = @Content()),
-			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
-	@PostMapping("/cadastrar-trilha")
-	public ResponseEntity<String> cadastrarTrilha(@RequestBody TrilhaDTO trilhaDTO) {
-
-		trilhaService.cadastrarTrilha(trilhaDTO);
-		return ResponseEntity.ok().body("Trilha cadastrada com sucesso");
-	}
-
 	@Operation(summary = "Atualizar turma", description = "Atualiza uma turma com base no identificador fornecido")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Turma atualizada com sucesso", content = @Content()),
@@ -252,4 +235,6 @@ public class CoordenadorController {
 		coordenadorService.alterarAluno(alunoDTO);
 		return ResponseEntity.ok().body("Aluno alterado com sucesso");
 	}
+	
+	
 }
