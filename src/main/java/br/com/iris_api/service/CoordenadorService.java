@@ -35,7 +35,7 @@ public class CoordenadorService {
 		var aluno = alunoRepository.findByCpf(alunoDTO.cpf()).orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
 		var turma = turmaRepository.findByIdentificador(alunoDTO.turmaIdentificador()).orElseThrow(() -> new RuntimeException("Turma não encontrada"));
 		
-		if (!turma.getIdentificador().equals(aluno.getTurma().getIdentificador())) {
+		if (aluno.getTurma() == null || !turma.getIdentificador().equals(aluno.getTurma().getIdentificador())) {
 			aluno.setTurma(turma);
 		}
 		
