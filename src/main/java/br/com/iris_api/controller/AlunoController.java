@@ -82,4 +82,10 @@ public class AlunoController {
 	public ResponseEntity<?> infoConta(Principal principal) {
 		return ResponseEntity.ok().body(alunoService.buscarAlunoPorCpf(principal.getName()));
 	}
+	
+	@GetMapping("/listar-itinerarios")
+	@SecurityRequirement(name = "bearerAuth")
+	public ResponseEntity<?> listarItinerarios(Principal principal) {
+		return ResponseEntity.ok().body(alunoService.listarItinerarios(principal.getName()));
+	}
 }

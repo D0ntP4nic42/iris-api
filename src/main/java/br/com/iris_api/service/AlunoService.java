@@ -1,8 +1,9 @@
 package br.com.iris_api.service;
 
-import br.com.iris_api.entity.Horario;
-import br.com.iris_api.entity.Itinerario;
-import br.com.iris_api.repository.ItinerarioRepository;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,7 +11,11 @@ import org.springframework.stereotype.Service;
 
 import br.com.iris_api.dto.AlunoDTO;
 import br.com.iris_api.entity.Aluno;
+import br.com.iris_api.entity.Horario;
+import br.com.iris_api.entity.Itinerario;
+import br.com.iris_api.filtros.ItinerarioFilter;
 import br.com.iris_api.repository.AlunoRepository;
+import br.com.iris_api.repository.ItinerarioRepository;
 import br.com.iris_api.repository.TurmaRepository;
 import br.com.iris_api.repository.UserRepository;
 import jakarta.persistence.EntityExistsException;
@@ -91,5 +96,34 @@ public class AlunoService {
 		return false; // Sem conflitos
 	}
 
+	public List<ItinerarioFilter> listarItinerarios(String cpf) {
+		var aluno = alunoRepository.findByCpf(cpf)
+				.orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
+		
+		var itinerarios = aluno.getItinerarios();
+		
+		if (itinerarios.isEmpty()) {
+			return List.of();
+		}
+		
+		ArrayList<ItinerarioFilter> itinerariosFiltrados = new ArrayList<>();
+		
+		for (Itinerario itinerario : itinerarios) {
+			var alunos = itinerario.getAlunos().stream()
+					.map(Aluno::getNome)
+					.toList();
+			
+			HashMap<String, String> disciplinas = new HashMap<>();
+			
+			for (var disciplina: itinerario.getDisciplinas()) {
+				disciplinas.put(disciplina.getNome(), disciplina.getProfessor().getNome());
+			}
+			
+			itinerariosFiltrados.add(new ItinerarioFilter(itinerario.getNome(), itinerario.getTipo(),
+					itinerario.getQtdVagas(), disciplinas, itinerario.getHorarios(), alunos));
+		}
+		
+		return itinerariosFiltrados;
+	}
 }
 
