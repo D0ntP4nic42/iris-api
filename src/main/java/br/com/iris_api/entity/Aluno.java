@@ -23,13 +23,14 @@ public class Aluno extends User {
 	private Turma turma;
 	
 	@ManyToMany
-	@JoinTable(
-			name = "aluno_itinerario",
-			joinColumns = @JoinColumn(name = "aluno_id"),
-			inverseJoinColumns = @JoinColumn(name = "itinerario_id")
-	)
+    @JoinTable(
+        name = "aluno_itinerario",
+        joinColumns = @JoinColumn(name = "aluno_id"),
+        inverseJoinColumns = @JoinColumn(name = "itinerario_id")
+    )
+	@JsonBackReference
+    private List<Itinerario> itinerarios = new ArrayList<>();
 
-	private List<Itinerario> itinerarios = new ArrayList<>();
 
 	public Aluno() {
 		super();

@@ -3,10 +3,11 @@ package br.com.iris_api.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -32,13 +33,15 @@ public class Itinerario {
 	private int qtdVagas;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "turma_id")
+	@JoinColumn(name = "itinerario_id")
 	private List<Disciplina> disciplinas;
 
 	@OneToMany(mappedBy = "itinerario", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonManagedReference
 	private List<Horario> horarios;
 
 	@ManyToMany(mappedBy = "itinerarios")
+	@JsonManagedReference
     private List<Aluno> alunos = new ArrayList<>();
 
 	public Itinerario() {

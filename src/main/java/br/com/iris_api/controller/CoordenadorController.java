@@ -242,4 +242,35 @@ public class CoordenadorController {
 		coordenadorService.adicionarItinerario(itinerarioDTO);
 		return ResponseEntity.ok().body("Itinerário adicionado com sucesso");
 	}
+	
+	@PutMapping("/alterar-itinerario")
+	public ResponseEntity<String> alterarItinerario(@RequestBody ItinerarioDTO itinerarioDTO) {
+		coordenadorService.alterarItinerario(itinerarioDTO);
+		return ResponseEntity.ok().body("Itinerário alterado com sucesso");
+	}
+	
+	@DeleteMapping("/remover-itinerario")
+	public ResponseEntity<String> removerItinerario(@PathParam(value = "nome") String nome) {
+		coordenadorService.removerItinerario(nome);
+		return ResponseEntity.ok().body("Itinerário removido com sucesso");
+	}
+	
+	@GetMapping("/itinerarios")
+	public ResponseEntity<?> listarItinerarios() {
+		return ResponseEntity.ok().body(coordenadorService.listarItinerarios());
+	}
+	
+	@PostMapping("/adicionar-disciplina-itinerario")
+	public ResponseEntity<String> adicionarDisciplinaItinerario(@PathParam(value = "nomeItinerario") String nomeItinerario,
+			@RequestBody List<String> nomeDisciplinas) {
+		coordenadorService.adicionarDisciplinaAoItinerario(nomeItinerario, nomeDisciplinas);
+		return ResponseEntity.ok().body("Disciplinas adicionadas ao itinerário com sucesso");
+	}
+	
+	@PutMapping("/remover-disciplina-itinerario")
+	public ResponseEntity<String> removerDisciplinaItinerario(@PathParam(value = "nomeItinerario") String nomeItinerario,
+			@RequestBody List<String> nomeDisciplinas) {
+		coordenadorService.removerDisciplinaDoItinerario(nomeItinerario, nomeDisciplinas);
+		return ResponseEntity.ok().body("Disciplinas removidas do itinerário com sucesso");
+	}
 }
