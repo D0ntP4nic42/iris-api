@@ -65,6 +65,11 @@ public class AlunoService {
 		// Salva o aluno (o itinerário será atualizado automaticamente)
 		alunoRepository.save(aluno);
 	}
+	
+	public Aluno buscarAlunoPorCpf(String cpf) {
+		return alunoRepository.findByCpf(cpf)
+				.orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
+	}
 
 
 	private boolean horariosConflitam(Itinerario novoItinerario, Aluno aluno) {

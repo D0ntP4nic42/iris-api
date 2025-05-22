@@ -76,4 +76,10 @@ public class AlunoController {
 	public ResponseEntity<?> listarTurmasDisponiveis() {
 		return ResponseEntity.ok().body(turmaService.listarTurmasDisponiveis());
 	}
+	
+	@GetMapping("/info-conta")
+	@SecurityRequirement(name = "bearerAuth")
+	public ResponseEntity<?> infoConta(Principal principal) {
+		return ResponseEntity.ok().body(alunoService.buscarAlunoPorCpf(principal.getName()));
+	}
 }
