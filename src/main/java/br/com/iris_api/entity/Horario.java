@@ -3,6 +3,8 @@ package br.com.iris_api.entity;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,6 +28,7 @@ public class Horario {
 
 	@ManyToOne
 	@JoinColumn(name = "itinerario_id")
+	@JsonBackReference
 	private Itinerario itinerario;
 
 	public Horario() {

@@ -28,6 +28,7 @@ public class Aluno extends User {
         joinColumns = @JoinColumn(name = "aluno_id"),
         inverseJoinColumns = @JoinColumn(name = "itinerario_id")
     )
+	@JsonBackReference
     private List<Itinerario> itinerarios = new ArrayList<>();
 
 	public Aluno() {
