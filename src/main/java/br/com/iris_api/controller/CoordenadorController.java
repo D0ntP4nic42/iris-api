@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.iris_api.dto.AlunoDTO;
 import br.com.iris_api.dto.DisciplinaDTO;
 import br.com.iris_api.dto.ItinerarioDTO;
+import br.com.iris_api.dto.PeriodoInscricaoAlterarDTO;
+import br.com.iris_api.dto.PeriodoInscricaoDTO;
 import br.com.iris_api.dto.ProfessorRegisterDTO;
 import br.com.iris_api.dto.TurmaDTO;
 import br.com.iris_api.dto.TurmaResponseDTO;
@@ -272,5 +274,28 @@ public class CoordenadorController {
 			@RequestBody List<String> nomeDisciplinas) {
 		coordenadorService.removerDisciplinaDoItinerario(nomeItinerario, nomeDisciplinas);
 		return ResponseEntity.ok().body("Disciplinas removidas do itinerário com sucesso");
+	}
+	
+	@PostMapping("/cadastrar-periodo-inscricao")
+	public ResponseEntity<String> cadastrarPeriodoInscricao(@RequestBody PeriodoInscricaoDTO periodoInscricaoDTO) {
+		coordenadorService.cadastrarPeriodoInscricao(periodoInscricaoDTO);
+		return ResponseEntity.ok().body("Período de inscrição cadastrado com sucesso");
+	}
+	
+	@DeleteMapping("/remover-periodo-inscricao")
+	public ResponseEntity<String> removerPeriodoInscricao(@PathParam(value = "id") Long id) {
+		coordenadorService.removerPeriodoInscricao(id);
+		return ResponseEntity.ok().body("Período de inscrição removido com sucesso");
+	}
+	
+	@PutMapping("/alterar-periodo-inscricao")
+	public ResponseEntity<String> alterarPeriodoInscricao(@RequestBody PeriodoInscricaoAlterarDTO periodoInscricaoAlterarDTO) {
+		coordenadorService.alterarPeriodoInscricao(periodoInscricaoAlterarDTO);
+		return ResponseEntity.ok().body("Período de inscrição alterado com sucesso");
+	}
+	
+	@GetMapping("/periodos-inscricao")
+	public ResponseEntity<?> listarPeriodosInscricao() {
+		return ResponseEntity.ok().body(coordenadorService.listarPeriodosInscricao());
 	}
 }

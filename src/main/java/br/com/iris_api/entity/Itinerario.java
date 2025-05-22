@@ -13,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -32,6 +33,10 @@ public class Itinerario {
 	@Column(name = "quantidade_vagas")
 	private int qtdVagas;
 
+	@ManyToOne
+	@JoinColumn(name = "periodoInscricao_id", nullable = true)
+	private PeriodoInscricao periodoInscricao;
+
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "itinerario_id")
 	private List<Disciplina> disciplinas;
@@ -42,7 +47,7 @@ public class Itinerario {
 
 	@ManyToMany(mappedBy = "itinerarios")
 	@JsonManagedReference
-    private List<Aluno> alunos = new ArrayList<>();
+	private List<Aluno> alunos = new ArrayList<>();
 
 	public Itinerario() {
 		super();
@@ -112,6 +117,14 @@ public class Itinerario {
 
 	public void setAlunos(List<Aluno> alunos) {
 		this.alunos = alunos;
+	}
+
+	public PeriodoInscricao getInscricao() {
+		return periodoInscricao;
+	}
+
+	public void setInscricao(PeriodoInscricao inscricao) {
+		this.periodoInscricao = inscricao;
 	}
 
 }

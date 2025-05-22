@@ -8,14 +8,18 @@ import org.springframework.stereotype.Service;
 
 import br.com.iris_api.dto.AlunoDTO;
 import br.com.iris_api.dto.ItinerarioDTO;
+import br.com.iris_api.dto.PeriodoInscricaoAlterarDTO;
+import br.com.iris_api.dto.PeriodoInscricaoDTO;
 import br.com.iris_api.entity.Aluno;
-import br.com.iris_api.entity.Disciplina;
 import br.com.iris_api.entity.Horario;
 import br.com.iris_api.entity.Itinerario;
+import br.com.iris_api.entity.PeriodoInscricao;
 import br.com.iris_api.entity.Professor;
+import br.com.iris_api.entity.Turma;
 import br.com.iris_api.repository.AlunoRepository;
 import br.com.iris_api.repository.DisciplinaRepository;
 import br.com.iris_api.repository.ItinerarioRepository;
+import br.com.iris_api.repository.PeriodoInscricaoRepository;
 import br.com.iris_api.repository.ProfessorRepository;
 import br.com.iris_api.repository.TurmaRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -36,6 +40,9 @@ public class CoordenadorService {
 	
 	@Autowired
 	private DisciplinaRepository disciplinaRepository;
+	
+	@Autowired
+	private PeriodoInscricaoRepository periodoInscricaoRepository;
 
 	public List<Professor> listarProfessores() {
 		return professorRepository.findAll();
@@ -127,5 +134,87 @@ public class CoordenadorService {
 		}
 		
 		itinerarioRepository.save(itinerario);
+	}
+	
+	public void cadastrarPeriodoInscricao(PeriodoInscricaoDTO periodoInscricaoDTO) {
+		var itinerarios = new ArrayList<Itinerario>();
+		
+		for (var itinerarioNome : periodoInscricaoDTO.itinerariosNome()) {
+			var itinerario = itinerarioRepository.findByNome(itinerarioNome)
+					.orElseThrow(() -> new EntityNotFoundException("Itinerário não encontrado"));
+			
+			if(itinerario.getInscricao() != null) {
+				throw new IllegalArgumentException("Itinerário já cadastrado em outro período de inscrição");
+			}
+			
+			itinerarios.add(itinerario);
+		}
+		
+		var turmasPermitidas = new ArrayList<Turma>();
+		
+		for (var turmaPermitidasNome : periodoInscricaoDTO.turmasPermitidasNome()) {
+			var turma = turmaRepository.findByIdentificador(turmaPermitidasNome)
+					.orElseThrow(() -> new EntityNotFoundException("Turma não encontrada"));
+			turmasPermitidas.add(turma);
+		}
+		
+		var periodoInscricao = periodoInscricaoRepository.save(new PeriodoInscricao(itinerarios, turmasPermitidas, periodoInscricaoDTO.dataFim()));
+		for (var itinerario : itinerarios) {
+			itinerario.setInscricao(periodoInscricao);
+			itinerarioRepository.save(itinerario);
+		}
+	}
+	
+	public void removerPeriodoInscricao(Long id) {
+		var periodoInscricao = periodoInscricaoRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Período de inscrição não encontrado"));
+		
+		for (var itinerario : periodoInscricao.getItinerarios()) {
+			itinerario.setInscricao(null);
+		}
+		
+		periodoInscricaoRepository.delete(periodoInscricao);
+	}
+	
+	public void alterarPeriodoInscricao(PeriodoInscricaoAlterarDTO periodoInscricaoAlterarDTO) {
+		var periodoInscricao = periodoInscricaoRepository.findById(periodoInscricaoAlterarDTO.id())
+				.orElseThrow(() -> new EntityNotFoundException("Período de inscrição não encontrado"));
+		
+		periodoInscricao.setDataFim(periodoInscricaoAlterarDTO.dataFim());
+		
+		var itinerarios = new ArrayList<Itinerario>();
+		
+		for (var itinerarioNome : periodoInscricaoAlterarDTO.itinerariosNome()) {
+			var itinerario = itinerarioRepository.findByNome(itinerarioNome)
+					.orElseThrow(() -> new EntityNotFoundException("Itinerário não encontrado"));
+			
+			if(itinerario.getInscricao() != null) {
+				throw new IllegalArgumentException("Itinerário já cadastrado em outro período de inscrição");
+			}
+			
+			itinerarios.add(itinerario);
+		}
+		
+		var turmasPermitidas = new ArrayList<Turma>();
+		
+		for (var turmaPermitidasNome : periodoInscricaoAlterarDTO.turmasPermitidasNome()) {
+			var turma = turmaRepository.findByIdentificador(turmaPermitidasNome)
+					.orElseThrow(() -> new EntityNotFoundException("Turma não encontrada"));
+			turmasPermitidas.add(turma);
+		}
+		
+		periodoInscricao.setItinerarios(itinerarios);
+		periodoInscricao.setTurmasPermitidas(turmasPermitidas);
+		
+		periodoInscricaoRepository.save(periodoInscricao);
+		
+		for (var itinerario : periodoInscricao.getItinerarios()) {
+			itinerario.setInscricao(periodoInscricao);
+			itinerarioRepository.save(itinerario);
+		}
+	}
+	
+	public List<PeriodoInscricao> listarPeriodosInscricao() {
+		return periodoInscricaoRepository.findAll();
 	}
 }

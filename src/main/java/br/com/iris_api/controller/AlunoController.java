@@ -88,4 +88,10 @@ public class AlunoController {
 	public ResponseEntity<?> listarItinerarios(Principal principal) {
 		return ResponseEntity.ok().body(alunoService.listarItinerarios(principal.getName()));
 	}
+	
+	@GetMapping("/itinerarios-disponiveis")
+	@SecurityRequirement(name = "bearerAuth")
+	public ResponseEntity<?> listarItinerariosDisponiveis(Principal principal) {
+		return ResponseEntity.ok().body(alunoService.listarItinerariosDisponiveis(principal.getName()));
+	}
 }
