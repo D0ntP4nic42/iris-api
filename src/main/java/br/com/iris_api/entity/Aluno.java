@@ -23,12 +23,13 @@ public class Aluno extends User {
 	private Turma turma;
 	
 	@ManyToMany
-    @JoinTable(
-        name = "aluno_itinerario",
-        joinColumns = @JoinColumn(name = "aluno_id"),
-        inverseJoinColumns = @JoinColumn(name = "itinerario_id")
-    )
-    private List<Itinerario> itinerarios = new ArrayList<>();
+	@JoinTable(
+			name = "aluno_itinerario",
+			joinColumns = @JoinColumn(name = "aluno_id"),
+			inverseJoinColumns = @JoinColumn(name = "itinerario_id")
+	)
+
+	private List<Itinerario> itinerarios = new ArrayList<>();
 
 	public Aluno() {
 		super();
@@ -36,6 +37,18 @@ public class Aluno extends User {
 
 	public Aluno(String nome, String cpf, String senha) {
 		super(nome, cpf, senha, Role.ALUNO.name(), true);
+	}
+
+	public void addItinerario(Itinerario itinerario) {
+		this.itinerarios.add(itinerario);
+	}
+
+	public void removeItinerario(Itinerario itinerario) {
+		this.itinerarios.remove(itinerario);
+	}
+
+	public List<Itinerario> getItinerarios() {
+		return itinerarios;
 	}
 
 	// getter e setter

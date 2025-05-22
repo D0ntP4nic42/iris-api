@@ -9,5 +9,4 @@ import br.com.iris_api.entity.Itinerario;
 public interface ItinerarioRepository extends JpaRepository<Itinerario, Long> {
 
 	Optional<Itinerario> findByNome(String nome);
-
 }

@@ -49,9 +49,9 @@ public class AlunoController {
 			@ApiResponse(responseCode = "404", description = "Entidade não encontrada", content = @Content()),
 			@ApiResponse(responseCode = "500", description = "Um erro desconhecido ocorreu", content = @Content()) })
 	@PostMapping("/matricular")
-	public ResponseEntity<String> matricularAluno(@PathParam(value = "identificador") String identificador,
+	public ResponseEntity<String> matricularAluno(@PathParam(value = "identificador") String nomeItinerario,
 			Principal principal) {
-		alunoService.matricularAluno(principal.getName(), identificador);
+		alunoService.matricularAluno(principal.getName(), nomeItinerario);
 		return ResponseEntity.ok().body("Aluno matriculado com sucesso");
 	}
 
@@ -65,6 +65,8 @@ public class AlunoController {
 	public ResponseEntity<?> listarDisciplinas(Principal principal) {
 		return ResponseEntity.ok().body(turmaService.listarDisciplinasAluno(principal.getName()));
 	}
+
+
 
 	@Operation(summary = "Listar turmas disponíveis", description = "Lista as turmas disponíveis para o aluno.")
 	@ApiResponses(value = {
