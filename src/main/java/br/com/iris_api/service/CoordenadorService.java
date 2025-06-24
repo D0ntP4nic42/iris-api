@@ -105,6 +105,12 @@ public class CoordenadorService {
 	public void removerItinerario(String nome) {
 		var itinerario = itinerarioRepository.findByNome(nome)
 				.orElseThrow(() -> new EntityNotFoundException("Itinerário não encontrado"));
+
+		itinerario.getAlunos().forEach(aluno -> {
+			aluno.removeItinerario(itinerario);
+			alunoRepository.save(aluno);
+		});
+		
 		itinerarioRepository.delete(itinerario);
 	}
 	

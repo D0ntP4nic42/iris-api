@@ -34,6 +34,7 @@ public class Itinerario {
 	private int qtdVagas;
 
 	@ManyToOne
+	@JsonManagedReference
 	@JoinColumn(name = "periodoInscricao_id", nullable = true)
 	private PeriodoInscricao periodoInscricao;
 

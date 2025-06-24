@@ -61,4 +61,8 @@ public class Aluno extends User {
 		this.turma = turma;
 	}
 
+	public void setItinerarios(List<Itinerario> itinerarios) {
+		this.itinerarios = itinerarios;
+	}
+
 }
